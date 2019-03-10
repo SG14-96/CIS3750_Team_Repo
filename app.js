@@ -13,7 +13,7 @@ FireBaseAdmin.initializeApp({
   databaseURL: 'https://<DATABASE_NAME>.firebaseio.com' // TODO: Chnage <<DATABASE_NAME>> to the real dataabse name.
 });
 
-admin.initializeApp({
+FireBaseAdmin.initializeApp({
   credential: admin.credential.cert({
     projectId: '<PROJECT_ID>',
     clientEmail: 'foo@<PROJECT_ID>.iam.gserviceaccount.com',
@@ -50,6 +50,24 @@ app.get('/index.js',function(req,res){
     res.contentType('application/javascript');
     res.send(minimizedContents._obfuscatedCode);
   });
+});
+
+app.get('/search', (req, res) => {
+   res.json({testString:'testing return for search call.'});
+});
+
+app.get('/advancedSearch', (req, res) => {
+   res.json({testString:'testing return for advanced search.'});
+});
+
+app.get('/getSalaryInformation', (req, res) => {
+   res.json({
+     name:'John Smith',
+     sector:'Energy',
+     salary:156000,
+     year: 2018,
+     province:'Ontario'
+   });
 });
 
 app.listen(portNum);
