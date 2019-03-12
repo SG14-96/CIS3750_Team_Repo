@@ -5,6 +5,20 @@ var path = require('path');
 
 // ---------- FIREBASE setup  ---------
 var FireBaseAdmin = require('firebase-admin');
+var firebase = require("firebase");
+
+// Initialize Firebase Connection
+// Account set up with Samuel Denton email
+var config = {
+  apiKey: "AIzaSyDATMWUh4_jSt86UME41RdOxrhnFcVqlHc",
+  authDomain: "salarydata-f161b.firebaseapp.com",
+  databaseURL: "https://salarydata-f161b.firebaseio.com",
+  projectId: "salarydata-f161b",
+  storageBucket: "salarydata-f161b.appspot.com",
+  messagingSenderId: "980571034893"
+};
+firebase.initializeApp(config);
+
 /*
 var serviceAccount = require('path/to/serviceAccountKey.json'); // make sure that the file exists and the account is activated.
 
@@ -25,7 +39,6 @@ FireBaseAdmin.initializeApp({
 // ----------------- Application ----------------------------
 var app = express();
 
-
 const fs = require('fs');
 const JavaScriptObfuscator = require('javascript-obfuscator');
 
@@ -40,7 +53,7 @@ app.get('/',function(req,res){
 // Send Style, do not change
 app.get('/style.css',function(req,res){
   //Feel free to change the contents of style.css to prettify your Web app
-  res.sendFile(path.join(__dirname+'/public/style.css'));
+  // res.sendFile(path.join(__dirname+'/public/style.css'));
 });
 
 // Send obfuscated JS, do not change
@@ -58,17 +71,79 @@ app.get('/search', (req, res) => {
 
 app.get('/advancedSearch', (req, res) => {
    res.json({testString:'testing return for advanced search.'});
+   res.json(search_for_individuals_option(first));
 });
 
-app.get('/getSalaryInformation', (req, res) => {
-   res.json({
-     name:'John Smith',
-     sector:'Energy',
-     salary:156000,
-     year: 2018,
-     province:'Ontario'
-   });
+// app.get('/getSalaryInformation', (req, res) => {
+//    res.json({
+//      name:'John Smith',
+//      sector:'Energy',
+//      salary:156000,
+//      year: 2018,
+//      province:'Ontario'
+//    });
+// });
+
+// Firebase Functions
+
+// Read the entire database
+app.get('/getSalaryInformation', function(req , res){
+  
+  var data_set = []
+  var dbRef = firebase.database().ref().child('People');
+  
+  dbRef.on('value', snap => {
+    data_set = snap.val();
+    console.log("Inside");
+    console.log(data_set);
+    res.send(data_set);
+  });
+
 });
+
+// Writing to the Database example
+//Sample Set of Data
+var people = [
+  { id: "John_Smith", name: "Johnny", last: "Smith" },
+  { id: "Samuel_Smith", name: "Samuel", last: "Smith" }
+];
+
+writeSet(people);
+
+function writeSet(people_to_add) {
+    for (i in people_to_add) {
+      var person = people_to_add[i];
+      console.log(person);
+      writeData(person.id, person.name, person.last);
+    }
+}
+
+function writeData(id, first, last_name) {
+    firebase.database().ref('People/Employee_'+id).set({
+      First: first,
+      Last: last_name
+    });
+}
+
+
+function search_for_individuals_option(first_name)
+{
+  var returned_set = [];
+
+  // Firebase call
+  var dbRef = firebase.database().ref('People').orderByChild('First').equalTo(first_name);
+  dbRef.on('value', snap => {
+    returned_set = snap.val();
+
+    //More advance search if more then one field
+    for (i in returned_set)
+    { 
+      console.log(returned_set[i]);
+    }
+
+  });
+  return search_results;
+}
 
 app.listen(portNum);
 console.log('Running app at localhost: ' + portNum);
