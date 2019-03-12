@@ -25,7 +25,6 @@ FireBaseAdmin.initializeApp({
 // ----------------- Application ----------------------------
 var app = express();
 
-
 const fs = require('fs');
 const JavaScriptObfuscator = require('javascript-obfuscator');
 
@@ -61,7 +60,8 @@ app.get('/advancedSearch', (req, res) => {
 });
 
 app.get('/getSalaryInformation', (req, res) => {
-   res.json({
+  console.log("Get\n");
+   res.send({
      name:'John Smith',
      sector:'Energy',
      salary:156000,
