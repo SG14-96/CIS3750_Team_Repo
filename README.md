@@ -4,3 +4,6 @@ Repo for W19 CIS 3750 Team: Sam's the Best
 
 To install all necessary software, tun the install.sh script.
 Run as SUDO.
+
+To run the program
+npm run dev portnumber
