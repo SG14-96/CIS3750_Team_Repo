@@ -53,7 +53,7 @@ app.get('/',function(req,res){
 // Send Style, do not change
 app.get('/style.css',function(req,res){
   //Feel free to change the contents of style.css to prettify your Web app
-  // res.sendFile(path.join(__dirname+'/public/style.css'));
+  res.sendFile(path.join(__dirname+'/public/style.css'));
 });
 
 // Send obfuscated JS, do not change
@@ -111,18 +111,18 @@ var people = [
 writeSet(people);
 
 function writeSet(people_to_add) {
-    for (i in people_to_add) {
-      var person = people_to_add[i];
-      console.log(person);
-      writeData(person.id, person.name, person.last);
-    }
+  for (i in people_to_add) {
+    var person = people_to_add[i];
+    console.log(person);
+    writeData(person.id, person.name, person.last);
+  }
 }
 
 function writeData(id, first, last_name) {
-    firebase.database().ref('People/Employee_'+id).set({
-      First: first,
-      Last: last_name
-    });
+  firebase.database().ref('People/Employee_'+id).set({
+    First: first,
+    Last: last_name
+  });
 }
 
 
