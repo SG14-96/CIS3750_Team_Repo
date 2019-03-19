@@ -41,10 +41,11 @@ var app = express();
 
 const fs = require('fs');
 const JavaScriptObfuscator = require('javascript-obfuscator');
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
 
 // Important, pass in port as in `npm run dev 1234`, do not change
 const portNum = process.argv[2];
-
 // Send HTML at root, do not change
 app.get('/',function(req,res){
   res.sendFile(path.join(__dirname+'/public/index.html'));
@@ -65,13 +66,29 @@ app.get('/index.js',function(req,res){
   });
 });
 
-app.get('/search', (req, res) => {
-   res.json({testString:'testing return for search call.'});
+app.post('/search', (req, res) => {
+  var firstName = req.body.fields.firstName;
+  var lastName = req.body.fields.lastName;
+  //console.log("names :" + firstName +" "+ lastName);
+  res.json({testString:'testing return for search call.'});
 });
 
-app.get('/advancedSearch', (req, res) => {
-   res.json({testString:'testing return for advanced search.'});
-   res.json(search_for_individuals_option(first));
+app.post('/advancedSearch', (req, res) => {
+  console.log(req.body);
+  var firstName = req.body.fields.firstName;
+  var lastName = req.body.fields.lastName;
+  var sector = req.body.fields.sector;
+  var employer = req.body.fields.employer;
+  var province = req.body.fields.province;
+  var salarayStart = req.body.fields.req.body.fields.salarayRange.starting;
+  var salarayEnd = req.body.fields.req.body.fields.salarayRange.ending;
+  var yearSart = req.body.fields.req.body.fields.year.starting;
+  var yearEnd = req.body.fields.req.body.fields.year.ending;
+  /*
+    Query databse and get results.
+    Send results.
+  */
+  res.json({testString:'testing return for advanced search.'});
 });
 
 // app.get('/getSalaryInformation', (req, res) => {
