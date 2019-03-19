@@ -74,7 +74,6 @@ app.post('/search', (req, res) => {
 });
 
 app.post('/advancedSearch', (req, res) => {
-  console.log(req.body);
   var firstName = req.body.fields.firstName;
   var lastName = req.body.fields.lastName;
   var sector = req.body.fields.sector;
@@ -84,6 +83,8 @@ app.post('/advancedSearch', (req, res) => {
   var salarayEnd = req.body.fields.req.body.fields.salarayRange.ending;
   var yearSart = req.body.fields.req.body.fields.year.starting;
   var yearEnd = req.body.fields.req.body.fields.year.ending;
+
+  console.log(firstName);
   /*
     Query databse and get results.
     Send results.
