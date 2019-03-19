@@ -69,8 +69,21 @@ app.get('/index.js',function(req,res){
 app.post('/search', (req, res) => {
   var firstName = req.body.fields.firstName;
   var lastName = req.body.fields.lastName;
-  //console.log("names :" + firstName +" "+ lastName);
-  res.json({testString:'testing return for search call.'});
+  var general_search = req.query.general_search_input;
+  console.log("Searching");
+
+  //Begin by searching through the first name field
+  var dbRef = firebase.database().ref('People').orderByChild('FirstName').startAt(general_search).endAt("abc\uf8ff");
+  dbRef.on('value', snap => {
+    var firstName_set = snap.val();
+
+    //If only one name is provided search through last names wiith same value
+    var dbRef = firebase.database().ref('People').orderByChild('LastName').startAt(general_search).endAt("abc\uf8ff");
+    dbRef.on('value', snap => {
+      var lastName_set = snap.val();      
+      console.log(mergeObjects(firstName_set, lastName_set));
+    });    
+  });
 });
 
 app.post('/advancedSearch', (req, res) => {
@@ -91,16 +104,6 @@ app.post('/advancedSearch', (req, res) => {
   */
   res.json({testString:'testing return for advanced search.'});
 });
-
-// app.get('/getSalaryInformation', (req, res) => {
-//    res.json({
-//      name:'John Smith',
-//      sector:'Energy',
-//      salary:156000,
-//      year: 2018,
-//      province:'Ontario'
-//    });
-// });
 
 // Firebase Functions
 
@@ -128,39 +131,14 @@ var people = [
 
 writeSet(people);
 
+
 function writeSet(people_to_add) {
   for (i in people_to_add) {
     var person = people_to_add[i];
-    console.log(person);
-    writeData(person.id, person.name, person.last);
+    firebase.database().ref('People/'+person.LastName+'_'+person.FirstName).set(
+      person
+    );
   }
-}
-
-function writeData(id, first, last_name) {
-  firebase.database().ref('People/Employee_'+id).set({
-    First: first,
-    Last: last_name
-  });
-}
-
-
-function search_for_individuals_option(first_name)
-{
-  var returned_set = [];
-
-  // Firebase call
-  var dbRef = firebase.database().ref('People').orderByChild('First').equalTo(first_name);
-  dbRef.on('value', snap => {
-    returned_set = snap.val();
-
-    //More advance search if more then one field
-    for (i in returned_set)
-    { 
-      console.log(returned_set[i]);
-    }
-
-  });
-  return search_results;
 }
 
 app.listen(portNum);
