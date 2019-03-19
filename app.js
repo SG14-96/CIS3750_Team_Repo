@@ -50,6 +50,18 @@ const portNum = process.argv[2];
 app.get('/',function(req,res){
   res.sendFile(path.join(__dirname+'/public/index.html'));
 });
+app.get('/aboutUs',function(req,res){
+  res.sendFile(path.join(__dirname+'/public/aboutUs.html'));
+});
+app.get('/contactUs',function(req,res){
+  res.sendFile(path.join(__dirname+'/public/contactUs.html'));
+});
+app.get('/HowItWorks',function(req,res){
+  res.sendFile(path.join(__dirname+'/public/HowItWorks.html'));
+});
+app.get('/img/logo.png',function(req,res){
+  res.sendFile(path.join(__dirname+'/public/img/logo.png'));
+});
 
 // Send Style, do not change
 app.get('/style.css',function(req,res){
