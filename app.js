@@ -62,6 +62,21 @@ app.get('/HowItWorks',function(req,res){
 app.get('/img/logo.png',function(req,res){
   res.sendFile(path.join(__dirname+'/public/img/logo.png'));
 });
+app.get('/img/facebookLogo.png',function(req,res){
+  res.sendFile(path.join(__dirname+'/public/img/facebookLogo.png'));
+});
+app.get('/img/instagramLogo.jpg',function(req,res){
+  res.sendFile(path.join(__dirname+'/public/img/instagramLogo.jpg'));
+});
+app.get('/img/statisticalAnalysisFormulas.jpg',function(req,res){
+  res.sendFile(path.join(__dirname+'/public/img/statisticalAnalysisFormulas.jpg'));
+});
+app.get('/img/teamImage.jpg',function(req,res){
+  res.sendFile(path.join(__dirname+'/public/img/teamImage.jpg'));
+});
+app.get('/img/twitterLogo.png',function(req,res){
+  res.sendFile(path.join(__dirname+'/public/img/twitterLogo.png'));
+});
 
 // Send Style, do not change
 app.get('/style.css',function(req,res){
