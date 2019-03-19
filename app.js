@@ -79,10 +79,10 @@ app.post('/advancedSearch', (req, res) => {
   var sector = req.body.fields.sector;
   var employer = req.body.fields.employer;
   var province = req.body.fields.province;
-  var salarayStart = req.body.fields.req.body.fields.salarayRange.starting;
-  var salarayEnd = req.body.fields.req.body.fields.salarayRange.ending;
-  var yearSart = req.body.fields.req.body.fields.year.starting;
-  var yearEnd = req.body.fields.req.body.fields.year.ending;
+  var salarayStart = req.body.fields.salarayRange.starting;
+  var salarayEnd = req.body.fields.salarayRange.ending;
+  var yearSart = req.body.fields.year.starting;
+  var yearEnd = req.body.fields.year.ending;
 
   console.log(firstName);
   /*
