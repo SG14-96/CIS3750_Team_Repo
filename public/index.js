@@ -47,18 +47,28 @@ function selectedRow() {
     console.log("lol");
 }
 
-// function search_for_individuals_option(FirstName) 
-// {
-//     $.ajax({
-//         type: 'get',            //Request type
-//         dataType: 'json',       //Data type - we will use JSON for almost everything 
-//         url: '/search_for_individuals_option',   //The server endpoint we are connecting to
-//         data: {
-//             firstName: FirstName
-//         },
-//         success: function (data) {
-//             console.log(data);
-//             insert_into_website_table(data);
-//         },        
-//     });
-// }
+// The user will insert a generic search
+// This function will pass one string, with no spaces to backend
+// Ajax will return a json to the front end with the search results
+
+function generic_search(general_search) 
+{
+    var general_search = 'search_bar';
+
+    // TODO: Change all spaces in the string in generic_search to '_'
+
+    $.ajax({
+        type: 'get',            //Request type
+        dataType: 'json',       //Data type - we will use JSON for almost everything 
+        url: '/search_for_individuals_option',   //The server endpoint we are connecting to
+        data: {
+            general_search: general_search
+        },
+        success: function (data) {
+            // Ajax will return a json to the front end with the search results
+            // [] will return if no results are found
+            console.log(data);
+            insert_into_website_table(data);
+        },        
+    });
+}
