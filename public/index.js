@@ -1,6 +1,8 @@
 // Backend Call
+CurrGroup = null;
 $(document).ready(function() {
         load_main_table();
+        console.log("test");
         $('#salaryTable').DataTable();
         // search_for_individuals_option("Samuel");
 });
@@ -13,35 +15,62 @@ function load_main_table()
         url: '/getSalaryInformation',   //The server endpoint we are connecting to 
         data: {},
         success: function (data) {
-            insert_into_website_table(data);
+            CurrGroup = data
+            insert_into_website_table(CurrGroup,10);
         },        
     });
 }
 
-function insert_into_website_table(person_array)
+function insert_into_website_table(person,tableSize)
 {
-    console.log("iNSERT INTO THE TABLE"); 
-    console.log(person_array);
-    let person = person_array;
-    let table = document.getElementById('salaryTable');;
-    for (i in person_array) {
+    let table = document.getElementById('salaryTable');
+    for (i = 0; i < tableSize; i ++) {
+        if(i >= person.length) {
+            break;
+        }
         let btm = document.createElement("input");
         btm.setAttribute('type','checkbox');
         btm.onclick = selectedRow;
         let row = table.insertRow(-1);
         row.insertCell(0).appendChild(btm);
-        row.insertCell(1).innerHTML = person[i].FirstName +" "+ person[i].LastName;
-        row.insertCell(2).innerHTML = person[i].Sector;
-        if(person[i]['Salary Paid'] === undefined) {
-            row.insertCell(3).innerHTML = person[i].SalaryPaid;  
-        }
-        else {
-            row.insertCell(3).innerHTML = person[i]['Salary Paid'];
-        }
-        row.insertCell(4).innerHTML = "Province"
-        row.insertCell(5).innerHTML = person[i]['Calendar Year']
+
+        fullName = person[i].firstLast.split('_');
+        row.insertCell(1).innerHTML = fullName.join(" ");
+        row.insertCell(2).innerHTML = person[i].employer;
+        sectorName = person[i].sector.split('_');
+        row.insertCell(3).innerHTML = sectorName.join(" ");
+        
+        row.insertCell(4).innerHTML = person[i].salary;  
+        row.insertCell(5).innerHTML = person[i].province;
+        row.insertCell(6).innerHTML = person[i].year;
         //person.innerHTML = person_array[i].First;
-    }  
+    }
+    document.getElementById('currPos').innerHTML = '0 - 10 of ' + person.length;
+    document.getElementById('currPos').name = '10';
+    pageTable = document.getElementById('tablePaging');
+    prev = document.createElement('LI');
+    link = document.createElement('A');
+
+    link.className = 'page-link';
+    link.innerHTML =  'Previous';
+    prev.className ='page-item';
+    prev.appendChild(link);
+
+    pageTable.appendChild(prev);
+    pages = Math.ceil(person.length/tableSize);
+    console.log(Math.ceil(person.length/tableSize));
+    for(i = 0; i < pages; i ++) {
+        prev = document.createElement('LI');
+        link = document.createElement('A');
+    
+        link.className = 'page-link';
+        link.innerHTML =  i;
+        prev.className ='page-item';
+        prev.appendChild(link);
+    
+        pageTable.appendChild(prev);
+    }
+
 } 
 function selectedRow() {
     console.log("lol");

@@ -163,26 +163,26 @@ app.get('/getSalaryInformation', function(req , res){
 // Writing to the Database
 // Writing to the Database example
 //Sample Set of Data
-var people = [  
-  {"Sector":"Colleges","LastName":"Abiscott","FirstName":"Alexa","Full_Name":"Alexa_Abiscott","Full_Name_Reverse":"Abiscott_Alexa","SalaryPaid":"$197,073.24","Taxable Benefits":"$2,033.69","Employer":"Sheridan College Institute of Technology and Advanced Learning","Job Title":"General Counsel And Information Privacy Officer","Calendar Year":"2017"},
-  {"Sector":"Colleges","LastName":"Ahn","FirstName":"Song Ho","Full_Name":"Song_Ho_Ahn","Full_Name_Reverse":"Ahn_Song_Ho","SalaryPaid":"$114,331.63","Taxable Benefits":"$51.57","Employer":"Sheridan College Institute of Technology and Advanced Learning","Job Title":"Visualization Researcher - Part-Time Faculty","Calendar Year":"2017"}
-  // {"Sector":"Colleges","LastName":"smaAhnna","FirstName":"Song Ho","SalaryPaid":"$114,331.63","Taxable Benefits":"$51.57","Employer":"Sheridan College Institute of Technology and Advanced Learning","Job Title":"Visualization Researcher - Part-Time Faculty","Calendar Year":"2017"},
-  // {"Sector":"Colleges","LastName":"Aitken","FirstName":"Sharon","Salary Paid":"$118,650.76","Taxable Benefits":"$1,250.00","Employer":"Sheridan College Institute of Technology and Advanced Learning","Job Title":"Director Development and Campaign","Calendar Year":"2017"},
-  // {"Sector":"Colleges","LastName":"Ali","FirstName":"Shirook","Salary Paid":"$104,398.32","Taxable Benefits":"$101.50","Employer":"Sheridan College Institute of Technology and Advanced Learning","Job Title":"Professor","Calendar Year":"2017"},
-  // {"Sector":"Colleges","LastName":"Allcott","FirstName":"Austin Micha","Salary Paid":"$124,307.70","Taxable Benefits":"$1,264.54","Employer":"Sheridan College Institute of Technology and Advanced Learning","Job Title":"Dean","Calendar Year":"2017"} 
-]; 
+// var people = [  
+//   {"Sector":"Colleges","LastName":"Abiscott","FirstName":"Alexa","Full_Name":"Alexa_Abiscott","Full_Name_Reverse":"Abiscott_Alexa","SalaryPaid":"$197,073.24","Taxable Benefits":"$2,033.69","Employer":"Sheridan College Institute of Technology and Advanced Learning","Job Title":"General Counsel And Information Privacy Officer","Calendar Year":"2017"},
+//   {"Sector":"Colleges","LastName":"Ahn","FirstName":"Song Ho","Full_Name":"Song_Ho_Ahn","Full_Name_Reverse":"Ahn_Song_Ho","SalaryPaid":"$114,331.63","Taxable Benefits":"$51.57","Employer":"Sheridan College Institute of Technology and Advanced Learning","Job Title":"Visualization Researcher - Part-Time Faculty","Calendar Year":"2017"}
+//   // {"Sector":"Colleges","LastName":"smaAhnna","FirstName":"Song Ho","SalaryPaid":"$114,331.63","Taxable Benefits":"$51.57","Employer":"Sheridan College Institute of Technology and Advanced Learning","Job Title":"Visualization Researcher - Part-Time Faculty","Calendar Year":"2017"},
+//   // {"Sector":"Colleges","LastName":"Aitken","FirstName":"Sharon","Salary Paid":"$118,650.76","Taxable Benefits":"$1,250.00","Employer":"Sheridan College Institute of Technology and Advanced Learning","Job Title":"Director Development and Campaign","Calendar Year":"2017"},
+//   // {"Sector":"Colleges","LastName":"Ali","FirstName":"Shirook","Salary Paid":"$104,398.32","Taxable Benefits":"$101.50","Employer":"Sheridan College Institute of Technology and Advanced Learning","Job Title":"Professor","Calendar Year":"2017"},
+//   // {"Sector":"Colleges","LastName":"Allcott","FirstName":"Austin Micha","Salary Paid":"$124,307.70","Taxable Benefits":"$1,264.54","Employer":"Sheridan College Institute of Technology and Advanced Learning","Job Title":"Dean","Calendar Year":"2017"} 
+// ]; 
 
 // Send a list to add it to the master
-writeSet(people);
+// writeSet(people);
 
-function writeSet(people_to_add) {
-  for (i in people_to_add) {
-    var person = people_to_add[i];
-    firebase.database().ref('People/'+person.LastName+'_'+person.FirstName).set(
-      person
-    );
-  }
-}
+// function writeSet(people_to_add) {
+//   for (i in people_to_add) {
+//     var person = people_to_add[i];
+//     firebase.database().ref('People/'+person.LastName+'_'+person.FirstName).set(
+//       person
+//     );
+//   }
+// }
 
 app.listen(portNum);
 console.log('Running app at localhost: ' + portNum);
