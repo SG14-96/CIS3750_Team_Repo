@@ -47,35 +47,22 @@ function insert_into_website_table(person,tableSize)
     }
     document.getElementById('currPos').innerHTML = '0 - 10 of ' + person.length;
     document.getElementById('currPos').name = '10';
-    pageTable = document.getElementById('tablePaging');
-    prev = document.createElement('LI');
-    link = document.createElement('A');
+    document.getElementById('totalPages').innerHTML = Math.ceil(person.length/tableSize);
 
-    link.className = 'page-link';
-    link.innerHTML =  'Previous';
-    prev.className ='page-item';
-    prev.appendChild(link);
-
-    pageTable.appendChild(prev);
-    pages = Math.ceil(person.length/tableSize);
-    console.log(Math.ceil(person.length/tableSize));
-    for(i = 0; i < pages; i ++) {
-        prev = document.createElement('LI');
-        link = document.createElement('A');
-    
-        link.className = 'page-link';
-        link.innerHTML =  i;
-        prev.className ='page-item';
-        prev.appendChild(link);
-    
-        pageTable.appendChild(prev);
-    }
 
 } 
 function selectedRow() {
     console.log("lol");
 }
-
+$('#Salary-tab').click(function(e) {
+    insert_into_website_table(CurrGroup,document.getElementById('currPos').name);
+});
+$('#selected-tab').click(function(e) {
+    console.log("yay")
+});
+$('#selected-tab').click(function(e) {
+    console.log("yay")
+});
 // The user will insert a generic search
 // This function will pass one string, with no spaces to backend
 // Ajax will return a json to the front end with the search results
