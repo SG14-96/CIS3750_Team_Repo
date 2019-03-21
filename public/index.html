@@ -54,8 +54,69 @@
         <br>
         <div class= "response-table container" id="tableBox">
             <div class="row justify-content-start input-group mb-3">
-                    <button class="btn btn-outline-secondary" type="button">Advance Search</button>
+                    <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#bigSearch" aria-expanded="false" aria-controls="collapseExample">
+                        Advance Search
+                    </button>
                     <button class="btn btn-outline-secondary" type="button">Graph/Stats</button>
+                    <div class="w-100"></div>
+                    <div class="collapse col border" id="bigSearch" >
+                        <form>
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <label for="firstName">First Name</label>
+                                    <input type="email" class="form-control" id="firstName"  placeholder="John">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="lastName">Last Name</label>
+                                    <input type="email" class="form-control" id="lastName"  placeholder="Doe">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="sector">Sector</label>
+                                <input type="email" class="form-control col-md-5" id="sector"  placeholder="University">
+
+                                <label for="employer">Employer</label>
+                                <input type="email" class="form-control col-md-5" id="employer"  placeholder="Guelph">
+
+                                <label for="prov">Province</label>
+                                <select class="form-control col-md-3" id="prov">
+                                        <option value="ON">Ontario</option>
+                                        <option value="AB">Alberta</option>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                        <label for="totalSalary">Salary</label>
+                                        <label id='totalSalary'for="minSalary">From</label>
+                                        <input type="email" class="form-control" id="minSalary"  placeholder="$0">
+                                </div>
+                                <div class="col-md-6">
+                                        <label for="minSalary">To</label>
+                                        <input type="email" class="form-control" id="maxSalary"  placeholder="$0">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                    <div class="col-md-6">
+                                            <label for="minYear">Year:From</label>
+                                            <input type="email" class="form-control" id="minYear"  placeholder="1996">
+                                    </div>
+                                    <div class="col-md-6">
+                                            <label for="maxYear">To</label>
+                                            <input type="email" class="form-control" id="maxYear"  placeholder="2018">
+                                    </div>
+                            </div>
+                            <br>
+                            <div class="row justify-content-center">
+                                <div class="col-1">
+                                    <button type="reset" class="btn btn-primary">Clear</button>
+                                </div>
+                                <div class="col-1">
+                                    <button type="submit" class="btn btn-primary">Search</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
             </div>
             <div class="row justify-content-end input-group mb-3">
                 <div class="input-group-prepend">
