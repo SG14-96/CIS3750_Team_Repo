@@ -2,8 +2,6 @@
 CurrGroup = null;
 $(document).ready(function() {
         load_main_table();
-        console.log("test");
-        $('#salaryTable').DataTable();
         // search_for_individuals_option("Samuel");
 });
 
@@ -23,9 +21,10 @@ function load_main_table()
 
 function insert_into_website_table(person,tableSize)
 {
-    let table = document.getElementById('salaryTable');
-    for (i = 0; i < tableSize; i ++) {
-        if(i >= person.length) {
+    i = 0;
+    let table = document.getElementById('records');
+    for (obj in person) {
+        if(i >= person.length || i === tableSize) {
             break;
         }
         let btm = document.createElement("input");
@@ -34,34 +33,106 @@ function insert_into_website_table(person,tableSize)
         let row = table.insertRow(-1);
         row.insertCell(0).appendChild(btm);
 
-        fullName = person[i].firstLast.split('_');
+        fullName = person[obj].firstLast.split('_');
         row.insertCell(1).innerHTML = fullName.join(" ");
-        row.insertCell(2).innerHTML = person[i].employer;
-        sectorName = person[i].sector.split('_');
+        row.insertCell(2).innerHTML = person[obj].employer;
+        sectorName = person[obj].sector.split('_');
         row.insertCell(3).innerHTML = sectorName.join(" ");
         
-        row.insertCell(4).innerHTML = person[i].salary;  
-        row.insertCell(5).innerHTML = person[i].province;
-        row.insertCell(6).innerHTML = person[i].year;
+        row.insertCell(4).innerHTML = person[obj].salary;  
+        row.insertCell(5).innerHTML = person[obj].province;
+        row.insertCell(6).innerHTML = person[obj].year;
         //person.innerHTML = person_array[i].First;
+        i++;
     }
-    document.getElementById('currPos').innerHTML = '0 - 10 of ' + person.length;
-    document.getElementById('currPos').name = '10';
-    document.getElementById('totalPages').innerHTML = Math.ceil(person.length/tableSize);
+    let size = Object.keys(person).length;
+    document.getElementById('totalPages').innerHTML = Math.ceil(size/tableSize);
 
 
 } 
 function selectedRow() {
     console.log("lol");
 }
+function newPage(currPage,selectedPage) {
+    let i = 0;
+    let table = document.getElementById('records');
+    let selectSize = document.getElementById('inputGroupSelect');
+    let currTableSize = parseInt(selectSize[selectSize.selectedIndex].value);
+    let beginIndex = currPage * currTableSize;
+
+    let newTbody = document.createElement('TBODY');
+    newTbody.id = "records";
+
+    let tableSize = selectedPage * currTableSize;
+
+    for (obj in CurrGroup) {
+        if( i >= beginIndex) {
+            if(i >= CurrGroup.length || i === tableSize) {
+                break;
+            }
+            let btm = document.createElement("input");
+            btm.setAttribute('type','checkbox');
+            btm.onclick = selectedRow;
+            let row = newTbody.insertRow(-1);
+            row.insertCell(0).appendChild(btm);
+
+            fullName = CurrGroup[obj].firstLast.split('_');
+            row.insertCell(1).innerHTML = fullName.join(" ");
+            row.insertCell(2).innerHTML = CurrGroup[obj].employer;
+            sectorName = CurrGroup[obj].sector.split('_');
+            row.insertCell(3).innerHTML = sectorName.join(" ");
+            
+            row.insertCell(4).innerHTML = CurrGroup[obj].salary;  
+            row.insertCell(5).innerHTML = CurrGroup[obj].province;
+            row.insertCell(6).innerHTML = CurrGroup[obj].year;
+            //person.innerHTML = person_array[i].First;
+        }
+        i++;
+    }
+    table.parentNode.replaceChild(newTbody,table);
+
+    
+
+}
 $('#Salary-tab').click(function(e) {
-    insert_into_website_table(CurrGroup,document.getElementById('currPos').name);
+    //insert_into_website_table(CurrGroup,document.getElementById('currPos').name);
 });
 $('#selected-tab').click(function(e) {
     console.log("yay")
 });
 $('#selected-tab').click(function(e) {
     console.log("yay")
+});
+$('#prevPage').click(function(e) {
+    currPage = document.getElementById('currPage').innerHTML;
+    if(currPage === '1') {
+        return;
+    }
+    currPage = parseInt(currPage);
+    
+    document.getElementById('currPage').innerHTML = currPage - 1;
+    newPage(currPage - 2,currPage - 1)
+
+});
+$('#nextPage').click(function(e) {
+    currPage = document.getElementById('currPage').innerHTML;
+    if(currPage === document.getElementById('totalPages').innerHTML) {
+        return;
+    }
+    currPage = parseInt(currPage);
+    nextPage = currPage + 1;
+    document.getElementById('currPage').innerHTML = nextPage;
+    newPage(currPage,nextPage)
+});
+$("#inputGroupSelect").change(function(e) {
+    let selectSize = document.getElementById('inputGroupSelect');
+    let currTableSize = parseInt(selectSize[selectSize.selectedIndex].value);
+    let totalPage = document.getElementById('totalPages');
+    let currentPage = parseInt(document.getElementById('currPage').innerHTML);
+    
+    totalPage.innerHTML = Math.ceil(Object.keys(CurrGroup).length/currTableSize);
+
+    newPage(currentPage - 1,currentPage);
 });
 // The user will insert a generic search
 // This function will pass one string, with no spaces to backend
