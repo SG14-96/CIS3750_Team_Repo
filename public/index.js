@@ -5,15 +5,20 @@ $(document).ready(function() {
         // search_for_individuals_option("Samuel");
 });
 
+    //Load the main page of the website
 function load_main_table() 
 {
+    var number_people = 10;
+    var sortBy = "firstName";
+    // Call the table, toggle the sort partBY function by
+    //  what the user wants to sort the table by
     $.ajax({
         type: 'get',            //Request type
         dataType: 'json',       //Data type - we will use JSON for almost everything 
         url: '/getSalaryInformation',   //The server endpoint we are connecting to 
         data: {   
-            sortBy: "lastName",
-            count: 2
+            sortBy: sortBy,
+            count: number_people
         },
         success: function (data) {
             CurrGroup = data
@@ -158,7 +163,7 @@ function generic_search(general_search)
             // Ajax will return a json to the front end with the search results
             // [] will return if no results are found
             console.log(data);
-            insert_into_website_table(data);
+            // insert_into_search_table(data);
         },        
     });
 }

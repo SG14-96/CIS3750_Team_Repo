@@ -86,7 +86,8 @@ app.get('/getSalaryInformation', function(req , res){
 
     //This works with the front end call but not via postman
     var column = req.query.sortBy;
-    var count = req.query.count;
+    var count = parseInt(req.query.count);
+    console.log(count);
 
     //This works with postman
     if (column == undefined && count == undefined) {
