@@ -135,8 +135,9 @@ app.get('/getSalaryInformation', function(req , res){
   
   dbRef.on('value', snap => {
     data_set = snap.val();
-    console.log(data_set);
-    res.json(data_set);
+    console.log("Inside");
+    //console.log(data_set);
+    res.send(data_set);
   });
 
 });

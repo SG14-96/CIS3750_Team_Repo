@@ -54,8 +54,69 @@
         <br>
         <div class= "response-table container" id="tableBox">
             <div class="row justify-content-start input-group mb-3">
-                    <button class="btn btn-outline-secondary" type="button">Advance Search</button>
+                    <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#bigSearch" aria-expanded="false" aria-controls="collapseExample">
+                        Advance Search
+                    </button>
                     <button class="btn btn-outline-secondary" type="button">Graph/Stats</button>
+                    <div class="w-100"></div>
+                    <div class="collapse col border" id="bigSearch" >
+                        <form>
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <label for="firstName">First Name</label>
+                                    <input type="email" class="form-control" id="firstName"  placeholder="John">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="lastName">Last Name</label>
+                                    <input type="email" class="form-control" id="lastName"  placeholder="Doe">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="sector">Sector</label>
+                                <input type="email" class="form-control col-md-5" id="sector"  placeholder="University">
+
+                                <label for="employer">Employer</label>
+                                <input type="email" class="form-control col-md-5" id="employer"  placeholder="Guelph">
+
+                                <label for="prov">Province</label>
+                                <select class="form-control col-md-3" id="prov">
+                                        <option value="ON">Ontario</option>
+                                        <option value="AB">Alberta</option>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                        <label for="totalSalary">Salary</label>
+                                        <label id='totalSalary'for="minSalary">From</label>
+                                        <input type="email" class="form-control" id="minSalary"  placeholder="$0">
+                                </div>
+                                <div class="col-md-6">
+                                        <label for="minSalary">To</label>
+                                        <input type="email" class="form-control" id="maxSalary"  placeholder="$0">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                    <div class="col-md-6">
+                                            <label for="minYear">Year:From</label>
+                                            <input type="email" class="form-control" id="minYear"  placeholder="1996">
+                                    </div>
+                                    <div class="col-md-6">
+                                            <label for="maxYear">To</label>
+                                            <input type="email" class="form-control" id="maxYear"  placeholder="2018">
+                                    </div>
+                            </div>
+                            <br>
+                            <div class="row justify-content-center">
+                                <div class="col-1">
+                                    <button type="reset" class="btn btn-primary">Clear</button>
+                                </div>
+                                <div class="col-1">
+                                    <button type="submit" class="btn btn-primary">Search</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
             </div>
             <div class="row justify-content-end input-group mb-3">
                 <div class="input-group-prepend">
@@ -64,7 +125,6 @@
                 </div>
                 <input type="text" class="form-control col-2" placeholder="Search" aria-label="Search">
             </div>
-            <span id="currPos"></span>
             <div class="row justify-content-center">
                 <table id=salaryTable class="table table-hover table-bordered">
                 <thead class="thread-light">
@@ -80,24 +140,30 @@
                     <th>Year</th>
                     </tr>
                 </thead>
+                <tbody id="records">
+
+                </tbody>
                 </table>
             </div>
-            <div class=" row dropdown justify-content-end">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Set Table Size
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">10</a>
-                        <a class="dropdown-item" href="#">25</a>
-                        <a class="dropdown-item" href="#">50</a>
-                        <a class="dropdown-item" href="#">100</a>
-                    </div>
+            <div class="input-group mb-3 justify-content-end">
+                <div class="input-group-prepend col-sm-1 ">
+                    <select class="custom-select" id="inputGroupSelect">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="75">75</option>
+                    </select>
+                </div>
+                <nav aria-label="Pages">
+                    <ul class="justify-content-end pagination" id="tablePaging">
+                        <li id="prevPage" class="page-item"><a class="page-link" href="#">Previous</a></li>
+                        <li class="page-item disabled"><a id="currPage" class="page-link" href="#" tabindex="-1">1</a></li>
+                        <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">of</a></li>
+                        <li class="page-item disabled"><a id="totalPages"class="page-link" href="#" tabindex="-1"></a></li>
+                        <li id="nextPage"class="page-item"><a class="page-link" href="#">Next</a></li>
+                    </ul>
+                </nav>
             </div>
-            <nav class="row justify-content-end"aria-label="Pages">
-                <ul class="pagination" id="tablePaging">
-
-                </ul>
-            </nav>
         </div>
     </div>
     <script src="/index.js"></script>
