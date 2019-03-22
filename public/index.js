@@ -11,7 +11,10 @@ function load_main_table()
         type: 'get',            //Request type
         dataType: 'json',       //Data type - we will use JSON for almost everything 
         url: '/getSalaryInformation',   //The server endpoint we are connecting to 
-        data: {},
+        data: {   
+            sortBy: "lastName",
+            count: 2
+        },
         success: function (data) {
             CurrGroup = data
             insert_into_website_table(CurrGroup,10);

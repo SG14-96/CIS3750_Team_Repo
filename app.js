@@ -77,6 +77,38 @@ app.get('/index.js',function(req,res){
 
 // Firebase Functions
 
+
+// Read the entire database
+app.get('/getSalaryInformation', function(req , res){
+    
+    var data_set = [];
+    var data_set_2 = [];
+
+    //This works with the front end call but not via postman
+    var column = req.query.sortBy;
+    var count = req.query.count;
+
+    //This works with postman
+    if (column == undefined && count == undefined) {
+      var column = req.body.fields.sortBy;
+      var count = req.body.fields.count;
+    } 
+
+    var dbRef = firebase.database().ref('People/');
+    
+    dbRef.orderByChild(column).limitToFirst(count).on("value", function(data) {
+      // console.log(data.val());
+      data.forEach(function(data) {
+        data_set.push(data.val());
+    });
+    res.send(data_set);
+      }, function(error) {
+            if (error) console.log(error);
+            else console.log("No error");
+            console.log("Donee");
+      });
+});
+
 /*
   General search for the table
 */
@@ -87,9 +119,11 @@ app.post('/search', (req, res) => {
   general_search = general_search.charAt(0).toUpperCase() + general_search.slice(1);
   
   //Begin by searching through the first name field
-  var dbRef = firebase.database().ref('People').orderByChild('Full_Name').startAt(general_search).endAt(general_search+"\uf8ff");
+  var dbRef = firebase.database().ref('People').orderBChild('firstLast').startAt(general_search).endAt(general_search+"\uf8ff");
   dbRef.on('value', snap => {
     var search_one = snap.val();
+
+    //Now filter through the array
 
     //Check if the search matches any names in reverse
     var dbRef = firebase.database().ref('People').orderByChild('Full_Name_Reverse').startAt(general_search).endAt(general_search+"\uf8ff");
@@ -124,22 +158,6 @@ app.post('/advancedSearch', (req, res) => {
     Send results.
   */
   res.json({testString:'testing return for advanced search.'});
-});
-
-// Read the entire database
-app.get('/getSalaryInformation', function(req , res){
-  
-  var data_set = []
-  // var dbRef = firebase.database().ref().child('People');
-  var dbRef = firebase.database().ref().child('People').limitToFirst(100);
-  
-  dbRef.on('value', snap => {
-    data_set = snap.val();
-    console.log("Inside");
-    //console.log(data_set);
-    res.send(data_set);
-  });
-
 });
 
 // app.get('/writeToDatabase', function(req , res){
