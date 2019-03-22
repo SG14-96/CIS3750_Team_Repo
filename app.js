@@ -2,7 +2,6 @@
 var express = require('express');
 var path = require('path');
 
-
 // ---------- FIREBASE setup  ---------
 var FireBaseAdmin = require('firebase-admin');
 var firebase = require("firebase");
@@ -76,7 +75,6 @@ app.post('/search', (req, res) => {
   var dbRef = firebase.database().ref('People').orderByChild('FirstName').startAt(general_search).endAt("abc\uf8ff");
   dbRef.on('value', snap => {
     var firstName_set = snap.val();
-
     //If only one name is provided search through last names wiith same value
     var dbRef = firebase.database().ref('People').orderByChild('LastName').startAt(general_search).endAt("abc\uf8ff");
     dbRef.on('value', snap => {
@@ -97,12 +95,26 @@ app.post('/advancedSearch', (req, res) => {
   var yearSart = req.body.fields.year.starting;
   var yearEnd = req.body.fields.year.ending;
 
-  console.log(firstName);
-  /*
-    Query databse and get results.
-    Send results.
-  */
-  res.json({testString:'testing return for advanced search.'});
+  var paramsMap = new Map();
+  paramsMap.set("FirstName",firstName);
+  paramsMap.set("FirstName",firstName);
+  paramsMap.set("Sector",sector);
+  paramsMap.set("Employer",employer);
+  paramsMap.set("Province",province);
+  paramsMap.set("SalaryPaid",salarayStart);
+  paramsMap.set("CalendarYear",yearSart);
+  
+  var DB = firebase.database().ref().child('People');
+  var dataSet = [];
+  DB.on('value',snap =>{
+    dataSet = snap.val();
+     res.json(dataSet);
+  });
+  for (var [key, value] of paramsMap) {
+    if (value != null) {
+      //
+    }
+  }
 });
 
 // Firebase Functions
@@ -124,6 +136,7 @@ app.get('/getSalaryInformation', function(req , res){
 
 // Writing to the Database example
 //Sample Set of Data
+/*
 var people = [
   { id: "John_Smith", name: "Johnny", last: "Smith" },
   { id: "Samuel_Smith", name: "Samuel", last: "Smith" }
@@ -140,6 +153,6 @@ function writeSet(people_to_add) {
     );
   }
 }
-
+*/
 app.listen(portNum);
 console.log('Running app at localhost: ' + portNum);
