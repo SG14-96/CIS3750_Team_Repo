@@ -98,16 +98,17 @@ app.get('/getSalaryInformation', function(req , res){
     var dbRef = firebase.database().ref('People/');
     
     dbRef.orderByChild(column).limitToFirst(count).on("value", function(data) {
-      // console.log(data.val());
-      data.forEach(function(data) {
-        data_set.push(data.val());
+        // console.log(data.val());
+        data.forEach(function(data) {
+          data_set.push(data.val());
+        });
+        res.send(data_set);
+    }, function(error) {
+        if (error) console.log(error);
+        else console.log("No error");
+        console.log("Donee");
     });
-    res.send(data_set);
-      }, function(error) {
-            if (error) console.log(error);
-            else console.log("No error");
-            console.log("Donee");
-      });
+    
 });
 
 /*
