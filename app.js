@@ -90,31 +90,64 @@ app.post('/advancedSearch', (req, res) => {
   var sector = req.body.fields.sector;
   var employer = req.body.fields.employer;
   var province = req.body.fields.province;
-  var salarayStart = req.body.fields.salarayRange.starting;
-  var salarayEnd = req.body.fields.salarayRange.ending;
-  var yearSart = req.body.fields.year.starting;
+  var salaryStart = req.body.fields.salaryRange.starting;
+  var salaryEnd = req.body.fields.salaryRange.ending;
+  var yearStart = req.body.fields.year.starting;
   var yearEnd = req.body.fields.year.ending;
 
-  var paramsMap = new Map();
-  paramsMap.set("FirstName",firstName);
-  paramsMap.set("FirstName",firstName);
-  paramsMap.set("Sector",sector);
-  paramsMap.set("Employer",employer);
-  paramsMap.set("Province",province);
-  paramsMap.set("SalaryPaid",salarayStart);
-  paramsMap.set("CalendarYear",yearSart);
-  
-  var DB = firebase.database().ref().child('People');
+  var DB = firebase.database().ref().child('People').limitToFirst(200);
   var dataSet = [];
   DB.on('value',snap =>{
     dataSet = snap.val();
-     res.json(dataSet);
   });
-  for (var [key, value] of paramsMap) {
-    if (value != null) {
-      //
-    }
+
+  if (firstName != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.firstName === firstName;
+    });
   }
+  if (lastName != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.lastName === lastName;
+    });
+  }
+  if (sector != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.sector === sector;
+    });
+  }
+  if (employer != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.employer === employer;
+    });
+  }
+  if (province != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.province === province;
+    });
+  }
+  if (salaryStart != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.salary >= salaryStart;
+    });
+  }
+  if (salaryEnd != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.salary <= salaryStart;
+    });
+  }
+  if (yearStart != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.year >= yearStart;
+    });
+  }
+  if (yearEnd != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.year <= yearEnd;
+    });
+  }
+
+  res.json(dataSet);
 });
 
 // Firebase Functions
