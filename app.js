@@ -123,12 +123,9 @@ app.post('/search', (req, res) => {
   //Begin by searching through the first name field
   var dbRef = firebase.database().ref('People').orderBChild('firstLast').startAt(general_search).endAt(general_search+"\uf8ff");
   dbRef.on('value', snap => {
-    var search_one = snap.val();
-
-    //Now filter through the array
-
-    //Check if the search matches any names in reverse
-    var dbRef = firebase.database().ref('People').orderByChild('Full_Name_Reverse').startAt(general_search).endAt(general_search+"\uf8ff");
+    var firstName_set = snap.val();
+    //If only one name is provided search through last names wiith same value
+    var dbRef = firebase.database().ref('People').orderByChild('LastName').startAt(general_search).endAt("abc\uf8ff");
     dbRef.on('value', snap => {
       var search_two = snap.val();
       res.json(mergeObjects(search_one,search_two)); 
@@ -149,17 +146,64 @@ app.post('/advancedSearch', (req, res) => {
   var sector = req.body.fields.sector;
   var employer = req.body.fields.employer;
   var province = req.body.fields.province;
-  var salarayStart = req.body.fields.salarayRange.starting;
-  var salarayEnd = req.body.fields.salarayRange.ending;
-  var yearSart = req.body.fields.year.starting;
+  var salaryStart = req.body.fields.salaryRange.starting;
+  var salaryEnd = req.body.fields.salaryRange.ending;
+  var yearStart = req.body.fields.year.starting;
   var yearEnd = req.body.fields.year.ending;
 
-  console.log(firstName);
-  /*
-    Query databse and get results.
-    Send results.
-  */
-  res.json({testString:'testing return for advanced search.'});
+  var DB = firebase.database().ref().child('People').limitToFirst(200);
+  var dataSet = [];
+  DB.on('value',snap =>{
+    dataSet = snap.val();
+  });
+
+  if (firstName != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.firstName === firstName;
+    });
+  }
+  if (lastName != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.lastName === lastName;
+    });
+  }
+  if (sector != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.sector === sector;
+    });
+  }
+  if (employer != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.employer === employer;
+    });
+  }
+  if (province != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.province === province;
+    });
+  }
+  if (salaryStart != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.salary >= salaryStart;
+    });
+  }
+  if (salaryEnd != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.salary <= salaryStart;
+    });
+  }
+  if (yearStart != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.year >= yearStart;
+    });
+  }
+  if (yearEnd != null) {
+    dataSet = dataSet.filter(function(data){
+      return data.year <= yearEnd;
+    });
+  }
+
+  res.json(dataSet);
 });
 
 // app.get('/writeToDatabase', function(req , res){
