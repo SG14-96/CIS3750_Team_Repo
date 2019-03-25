@@ -29,7 +29,6 @@ function load_main_table()
             count: number_people
         },
         success: function (data) {
-            console.log(data);
             CurrGroup = data
             insert_into_website_table(CurrGroup,10);
         },        
@@ -74,17 +73,20 @@ function selectedRow() {
         selectBody.id = "records";
     }
     if(this.checked === true) {
-    this.value = 'on';
     let row = document.createElement('tr');
         row = this.parentNode.parentNode.cloneNode(true);
         row.firstChild.firstChild.onclick = selectedRow;
         selectBody.appendChild(row);
+        //update_on_row_select(this.parentNode.parentNode.cells[1],true);
+
     }
     else {
         let row = selectBody.rows;
         for(let i = 0; i < row.length; i ++) {
-            if(this.parentNode.parentNode.cells[1] === row[i].cells[1]) {
+            if(this.parentNode.parentNode.cells[1].innerHTML === row[i].cells[1].innerHTML) {
+                console.log('test');
                 selectBody.removeChild(row[i]);
+                //update_on_row_select(this.parentNode.parentNode.cells[1],false);
             }
         }
     }
@@ -154,9 +156,9 @@ function paging(newPage) {
 
 }
 $('#Salary-tab').click(function(e) {
-    currSize = document.getElementById('currPage').innerHTML;
-    currSize = parseInt(currSize);
-    paging(currSize);
+    selectVal = document.getElementById('inputGroupSelect');
+    currSize = parseInt(selectVal[selectVal.selectedIndex].value);
+    newTbody(currSize);
 });
 $('#selected-tab').click(function(e) {
     if(selectBody === null) {
@@ -224,9 +226,19 @@ $('#downloadTable').click(function(e) {
 $("#genSearch").click(function(e) {
     toSearch = document.getElementById('genSearchVal');
     currPage = document.getElementById('currPage').innerHTML;
-    CurrGroup = generic_search(toSearch.value);
+    if(toSearch.value === '') {
+        paging(parseInt(currPage));
+    }
+    else {
+        CurrGroup = generic_search(toSearch.value);
+    }
 
     
+});
+$("#AdvanceSearchBtm").click(function(e) {
+    
+
+
 });
 // The user will insert a generic search
 // This function will pass one string, with no spaces to backend
@@ -237,7 +249,7 @@ function generic_search(uesrSearchVal)
     console.log("general");
     let selectSize = document.getElementById('inputGroupSelect');
     let currTableSize = parseInt(selectSize[selectSize.selectedIndex].value);
-    console.log(uesrSearchVal)
+
     $.ajax({
         type: 'get',            //Request type
         dataType: 'json',       //Data type - we will use JSON for almost everything 
@@ -265,7 +277,6 @@ function update_on_row_select(person_name, action) {
 
             //Person to be updated
             toUpdate: person_name,
-
             //action, true when they select, faLse when they unselect
             select: action
         },
