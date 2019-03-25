@@ -80,21 +80,24 @@ function selectedRow() {
         selectBody = document.createElement("tbody");
         selectBody.id = "records";
     }
+    let name = this.parentNode.parentNode.cells[1].innerHTML;
+    name = name.split(" ");
+    name = name.join("_");
     if(this.checked === true) {
     let row = document.createElement('tr');
         row = this.parentNode.parentNode.cloneNode(true);
         row.firstChild.firstChild.onclick = selectedRow;
         selectBody.appendChild(row);
-        //update_on_row_select(this.parentNode.parentNode.cells[1],true);
+        console.log(name);
+        update_on_row_select(name,true);
 
     }
     else {
         let row = selectBody.rows;
         for(let i = 0; i < row.length; i ++) {
             if(this.parentNode.parentNode.cells[1].innerHTML === row[i].cells[1].innerHTML) {
-                console.log('test');
                 selectBody.removeChild(row[i]);
-                //update_on_row_select(this.parentNode.parentNode.cells[1],false);
+                update_on_row_select(name,false);
             }
         }
     }
@@ -289,7 +292,7 @@ function update_on_row_select(person_name, action) {
             select: action
         },
         success: function (data) {
-            console.log("Done");
+            console.log(data);
         },        
     }); 
 }
