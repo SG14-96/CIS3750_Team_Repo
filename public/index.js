@@ -5,6 +5,12 @@ let searchBody = null;
 $(document).ready(function() {
         load_main_table();
         // search_for_individuals_option("Samuel");
+
+        //Testing general search
+        // generic_search("David_Apramian");
+
+        //Testing update
+        // update_on_row_select("David_Apramian", true);
 });
 
     //Load the main page of the website
@@ -12,7 +18,7 @@ function load_main_table()
 {
     var number_people = 10;
     var sortBy = "firstName";
-    // Call the table, toggle the sort partBY function by
+    // Call the table, toggle the sort by
     //  what the user wants to sort the table by
     $.ajax({
         type: 'get',            //Request type
@@ -227,11 +233,12 @@ $("#genSearch").click(function(e) {
 
 function generic_search(uesrSearchVal) 
 {
+    console.log("general");
     let selectSize = document.getElementById('inputGroupSelect');
     let currTableSize = parseInt(selectSize[selectSize.selectedIndex].value);
     console.log(uesrSearchVal)
     $.ajax({
-        type: 'post',            //Request type
+        type: 'get',            //Request type
         dataType: 'json',       //Data type - we will use JSON for almost everything 
         url: '/search',   //The server endpoint we are connecting to
         data: {
@@ -245,4 +252,24 @@ function generic_search(uesrSearchVal)
             // insert_into_search_table(data);
         },       
     });
+}
+
+function update_on_row_select(person_name, action) {
+    // person name will be First Last, spaces = "_", caps on first letter
+    $.ajax({
+        type: 'get',            //Request type
+        dataType: 'json',       //Data type - we will use JSON for almost everything 
+        url: '/update_record_select',   //The server endpoint we are connecting to
+        data: {
+
+            //Person to be updated
+            toUpdate: person_name,
+
+            //action, true when they select, faLse when they unselect
+            select: action
+        },
+        success: function (data) {
+            console.log("Done");
+        },        
+    }); 
 }
