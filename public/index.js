@@ -272,17 +272,25 @@ function update_on_row_select(person_name, action) {
     });
 }
 
+//Call this function to generate the graph for the current data within the selected table
 function create_graph(){
+  let selectedTable = document.getElementById("records"),
+    records = [];//TODO:: FILL RECORDS WILL ARRAY
 
-  let graphType = "scatter",
+   let graphType = "scatter", //TODO:: Get the type of graph --- We can just keep it scatter for saving time
     xAxis = [],
     yAxis = [],
-    xAxisName = "X-Axis",
-    yAxisName = "Y-Axis",
+    xAxisName = "Year", //What x-Axis we are using: These can be static if beeded: TODO::Fix names
+    yAxisName = "Salary"  //What y-Axis we are using: These can be static if needed
     title = xAxisName + " VS " + yAxisName +" " + graphType + " plot";
 
-    xAxis =  [1, 2, 3, 4];
-    yAxis =  [10, 15, 13, 17];
+    let recordsLength = records.length;
+    while(recordsLength){//Loops though all the selected records and add's the values of the axis's to the respective arrays
+      recordsLength--
+      xAxis.push(records[recordsLength].xAxisName);
+      yAxis.push(records[recordsLength].yAxisName);
+    }
+
   $.ajax({
       type:'get',
       dataType:'json',
@@ -291,15 +299,15 @@ function create_graph(){
         type:graphType,
         xAxis:xAxis,
         yAxis:yAxis,
-        xAxisName,
-        yAxisName,
-        title
+        xAxisName:xAxisName,
+        yAxisName:yAxisName,
+        title:title
       },
       success:function(data){
         let selectSize = document.getElementById('TESTGRAPHING'),//CHANGE This to actual DIV
           graph = document.createElement("IMG");
-        graph.src = 'img/graph.png';
-        selectSize.appendChild(graph);
+          graph.src = 'img/graph.png';
+          selectSize.appendChild(graph);
       },
       error:function(data){
         console.log("Error");

@@ -240,10 +240,8 @@ app.get('/update_record_select', (req, res) => {
 
 });
 
+//NOTE:: How this works is it will save the file into public/img and then use it later
 app.get('/create_graph', (req,res) =>{
-  console.log(req.query);
-console.log(req.query.type);
-
     var trace1 = {
       x: req.query.xAxis,
       y: req.query.yAxis,
@@ -268,13 +266,13 @@ console.log(req.query.type);
 
   var figure = { 'data': [trace1],'layout': layout};
 
-  var imgOpts = {
+  var imgOpts = {//NOTE::Can change the proportions of the image here
     format: 'png',
     width: 500,
     height: 250
   };
 
-  plotly.getImage(figure, imgOpts, function (error, imageStream) {
+  plotly.getImage(figure, imgOpts, function (error, imageStream) {//NOTE::Downloading can be the same thing but go into downloads folder
     var fileStream = fs.createWriteStream(__dirname+'/public/img/graph.png');
     imageStream.pipe(fileStream);
     res.send({});
