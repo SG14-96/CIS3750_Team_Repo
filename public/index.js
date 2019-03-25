@@ -1,7 +1,9 @@
 // Backend Call
-let CurrGroup = null;
-let selectBody = null;
-let searchBody = null;
+let currGroup = null;
+let salaryGroup = null;
+let selectGroup = [];
+let searchGroup = [];
+let currTab = 0;
 $(document).ready(function() {
         load_main_table();
 
@@ -37,76 +39,78 @@ function load_main_table()
             count: number_people
         },
         success: function (data) {
-            CurrGroup = data
-            insert_into_website_table(CurrGroup,10);
+            salaryGroup = data
+            currGroup = salaryGroup;
+            insert_into_website_table(10);
         },        
     });
 }
 
-function insert_into_website_table(person,tableSize)
+function insert_into_website_table(tableSize)
 {
     i = 0;
     let table = document.getElementById('records');
-    for (obj in person) {
-        if(i >= person.length || i === tableSize) {
+    for (obj in salaryGroup) {
+        if(i >= salaryGroup.length || i === tableSize) {
             break;
         }
-        console.log(person);
         let btm = document.createElement("input");
         btm.setAttribute('type','checkbox');
         btm.onclick = selectedRow;
         
-        btm.checked = JSON.parse(person[obj].selected);
+        btm.checked = JSON.parse(salaryGroup[obj].selected);
+        if(btm.checked === true) {
+            btm.checked = false;
+            salaryGroup[obj].selected = false;
+            update_on_row_select(salaryGroup[obj].firstLast,'false');
+        }
         let row = table.insertRow(-1);
         row.insertCell(0).appendChild(btm);
 
-        fullName = person[obj].firstLast.split('_');
+        fullName = salaryGroup[obj].firstLast.split('_');
         row.insertCell(1).innerHTML = fullName.join(" ");
-        row.insertCell(2).innerHTML = person[obj].employer;
-        sectorName = person[obj].sector.split('_');
+        row.insertCell(2).innerHTML = salaryGroup[obj].employer;
+        sectorName = salaryGroup[obj].sector.split('_');
         row.insertCell(3).innerHTML = sectorName.join(" ");
         
-        row.insertCell(4).innerHTML = person[obj].salary;  
-        row.insertCell(5).innerHTML = person[obj].province;
-        row.insertCell(6).innerHTML = person[obj].year;
-        //person.innerHTML = person_array[i].First;
+        row.insertCell(4).innerHTML = salaryGroup[obj].salary;  
+        row.insertCell(5).innerHTML = salaryGroup[obj].province;
+        row.insertCell(6).innerHTML = salaryGroup[obj].year;
+        //salaryGroup.innerHTML = person_array[i].First;
         i++;
     }
-    //let size = Object.keys(person).length;
+    //let size = Object.keys(salaryGroup).length;
     document.getElementById('totalPages').innerHTML = 10;
-
 
 } 
 function selectedRow() {
-    if(selectBody === null) {
-        selectBody = document.createElement("tbody");
-        selectBody.id = "records";
-    }
     let name = this.parentNode.parentNode.cells[1].innerHTML;
+    
     name = name.split(" ");
     name = name.join("_");
-    if(this.checked === true) {
-    let row = document.createElement('tr');
-        row = this.parentNode.parentNode.cloneNode(true);
-        row.firstChild.firstChild.onclick = selectedRow;
-        selectBody.appendChild(row);
-        console.log(name);
-        update_on_row_select(name,true);
-
-    }
-    else {
-        let row = selectBody.rows;
-        for(let i = 0; i < row.length; i ++) {
-            if(this.parentNode.parentNode.cells[1].innerHTML === row[i].cells[1].innerHTML) {
-                selectBody.removeChild(row[i]);
-                console.log(name);
-                update_on_row_select(name,false);
+    for(obj in currGroup) {
+        if(name === currGroup[obj].firstLast) {
+            currGroup[obj].selected = this.checked;
+            if(currGroup[obj].selected === true) {
+                let str = JSON.stringify(currGroup[obj]);
+                salaryGroup[obj].selected = true;
+                selectGroup.push(JSON.parse(str));
+                update_on_row_select(name,'true');
             }
+            else {
+                for(let i = 0; i < selectGroup.length; i ++) {
+                    if(name === selectGroup[i].firstLast) {
+                        selectGroup.splice(i,1);
+                        update_on_row_select(name,'false');
+                    }
+                }
+            }
+
         }
     }
-
+    console.log(selectGroup)
 }
-function newTbody(currPage) {
+function newTbody(currPage,group) {
     let i = 0;
     let table = document.getElementById('records');
 
@@ -114,83 +118,99 @@ function newTbody(currPage) {
     newTbody.id = "records";
 
 
-    for (obj in CurrGroup) {
-            if(i >= CurrGroup.length || i === currPage) {
+    for (obj in group) {
+            if(i >= group.length || i === currPage) {
                 break;
             }
             let btm = document.createElement("input");
             btm.setAttribute('type','checkbox');
             btm.onclick = selectedRow;
-            btm.checked = CurrGroup[obj].selected;
+            btm.checked = JSON.parse(group[obj].selected);
             let row = newTbody.insertRow(-1);
             row.insertCell(0).appendChild(btm);
 
-            fullName = CurrGroup[obj].firstLast.split('_');
+            fullName = group[obj].firstLast.split('_');
             row.insertCell(1).innerHTML = fullName.join(" ");
-            row.insertCell(2).innerHTML = CurrGroup[obj].employer;
-            sectorName = CurrGroup[obj].sector.split('_');
+            row.insertCell(2).innerHTML = group[obj].employer;
+            sectorName = group[obj].sector.split('_');
             row.insertCell(3).innerHTML = sectorName.join(" ");
             
-            row.insertCell(4).innerHTML = CurrGroup[obj].salary;  
-            row.insertCell(5).innerHTML = CurrGroup[obj].province;
-            row.insertCell(6).innerHTML = CurrGroup[obj].year;
+            row.insertCell(4).innerHTML = group[obj].salary;  
+            row.insertCell(5).innerHTML = group[obj].province;
+            row.insertCell(6).innerHTML = group[obj].year;
             //person.innerHTML = person_array[i].First;
         i++;
     }
     table.parentNode.replaceChild(newTbody,table);
 
-    
 
 }
 function paging(newPage) {
     selectVal = document.getElementById('inputGroupSelect');
     currSize = parseInt(selectVal[selectVal.selectedIndex].value);
     dbSize = currSize * newPage;
-    $.ajax({
-        type: 'get',            //Request type
-        dataType: 'json',       //Data type - we will use JSON for almost everything 
-        url: '/getSalaryInformation',   //The server endpoint we are connecting to 
-        data: {   
-            sortBy: "firstName",
-            count: dbSize
-        },
-        success: function (data) {
-            let i = 0;
-            CurrGroup = [];
-            //console.log(data)
-            for (obj in data) {
-                if(i >= (dbSize - currSize) ) {
-                    CurrGroup.push(data[obj]);
+    if(currTab == 0) {
+        $.ajax({
+            type: 'get',            //Request type
+            dataType: 'json',       //Data type - we will use JSON for almost everything 
+            url: '/getSalaryInformation',   //The server endpoint we are connecting to 
+            data: {   
+                sortBy: "firstName",
+                count: dbSize
+            },
+            success: function (data) {
+                let i = 0;
+                let tempGroup = [];
+                //console.log(data)
+                for (obj in data) {
+                    if(i >= (dbSize - currSize) ) {
+                        tempGroup.push(data[obj]);
+                    }
+                    i++;
                 }
-                i++;
+                currGroup = tempGroup;
+                newTbody(currSize,currGroup);
+            },        
+        });
+    }
+    else {
+        let i = 0;
+        let tempGroup = []
+        for(obj in currGroup) {
+            if(i >= currSize * (newPage - 1)) {
+                console.log(obj)
+                tempGroup.push(currGroup[obj]);
             }
-            newTbody(currSize);
-        },        
-    });
+            i++;
+        }
+        newTbody(currSize,tempGroup);
+    }
 
 }
 $('#Salary-tab').click(function(e) {
+    e.preventDefault();
     selectVal = document.getElementById('inputGroupSelect');
     currSize = parseInt(selectVal[selectVal.selectedIndex].value);
-    newTbody(currSize);
+    currGroup = salaryGroup;
+    currTab = 0;
+    newTbody(currSize,salaryGroup);
 });
 $('#selected-tab').click(function(e) {
-    if(selectBody === null) {
-        selectBody = document.createElement('TBODY');
-        selectBody.id = "records";
-    }
-    let table = document.getElementById('records');
-    table.parentNode.replaceChild(selectBody,table);
+    e.preventDefault();
+    selectVal = document.getElementById('inputGroupSelect');
+    currSize = parseInt(selectVal[selectVal.selectedIndex].value);
+    currGroup = selectGroup;
+    currTab = 1;
+    newTbody(currSize,selectGroup);
 });
 $('#search-tab').click(function(e) {
-    if(searchBody === null) {
-        searchBody = document.createElement('TBODY');
-        searchBody.id = "records";
-    }
-    let table = document.getElementById('records');
-    table.parentNode.replaceChild(searchBody,table);
+    e.preventDefault();
+    selectVal = document.getElementById('inputGroupSelect');
+    currSize = parseInt(selectVal[selectVal.selectedIndex].value);
+    currGroup = searchBody;
+    currTab = 2;
+    newTbody(currSize,searchBody);
 });
-
 $('#prevPage').click(function(e) {
     let currPage = document.getElementById('currPage').innerHTML;
     if(currPage === '1') {
@@ -203,14 +223,14 @@ $('#prevPage').click(function(e) {
 
 });
 $('#nextPage').click(function(e) {
-    currPage = document.getElementById('currPage').innerHTML;
+    let currPage = document.getElementById('currPage').innerHTML;
     if(currPage === document.getElementById('totalPages').innerHTML) {
         return;
     }
     currPage = parseInt(currPage);
     nextPage = currPage + 1;
     document.getElementById('currPage').innerHTML = nextPage;
-    paging(nextPage)
+    paging(nextPage);
 });
 $("#inputGroupSelect").change(function(e) {
     let selectSize = document.getElementById('inputGroupSelect');
@@ -226,25 +246,24 @@ $("#inputGroupSelect").change(function(e) {
             count: currTableSize
         },
         success: function (data) {
-            CurrGroup = data
-            paging(currPage);
+            currGroup = data
+            paging(currPage,document.getElementsByTagName('tabs').id);
             document.getElementById('totalPages').innerHTML = Math.ceil(100 / currTableSize);
         },        
     });
     
 });
 $('#downloadTable').click(function(e) {
-    let table = document.getElementById('records');
-    console.log(table);
+    download_csv();
 });
 $("#genSearch").click(function(e) {
     toSearch = document.getElementById('genSearchVal');
     currPage = document.getElementById('currPage').innerHTML;
     if(toSearch.value === '') {
-        paging(parseInt(currPage));
+        paging(parseInt(currPage),currTab);
     }
     else {
-        CurrGroup = generic_search(toSearch.value);
+        currGroup = generic_search(toSearch.value);
     }
 
     
@@ -272,10 +291,11 @@ function generic_search(uesrSearchVal)
             searchVal: uesrSearchVal
         },
         success: function (data) {
-            CurrGroup = data;
+            currGroup = data;
+            salaryGroup = currGroup;
             // Ajax will return a json to the front end with the search results
             // [] will return if no results are found
-            newTbody(currTableSize)
+            newTbody(currTableSize, currGroup);
             // insert_into_search_table(data);
         },       
     });
@@ -310,6 +330,7 @@ function download_csv() {
         data: {},
         success: function (data) {
             console.log(data);
+        
         },        
     }); 
 }
