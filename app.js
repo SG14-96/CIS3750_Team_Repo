@@ -155,54 +155,52 @@ app.post('/advancedSearch', (req, res) => {
   var dataSet = [];
   DB.on('value',snap =>{
     dataSet = snap.val();
+    if (firstName != null) {
+      dataSet = dataSet.filter(function(data){
+        return data.firstName === firstName;
+      });
+    }
+    if (lastName != null) {
+      dataSet = dataSet.filter(function(data){
+        return data.lastName === lastName;
+      });
+    }
+    if (sector != null) {
+      dataSet = dataSet.filter(function(data){
+        return data.sector === sector;
+      });
+    }
+    if (employer != null) {
+      dataSet = dataSet.filter(function(data){
+        return data.employer === employer;
+      });
+    }
+    if (province != null) {
+      dataSet = dataSet.filter(function(data){
+        return data.province === province;
+      });
+    }
+    if (salaryStart != null) {
+      dataSet = dataSet.filter(function(data){
+        return data.salary >= salaryStart;
+      });
+    }
+    if (salaryEnd != null) {
+      dataSet = dataSet.filter(function(data){
+        return data.salary <= salaryStart;
+      });
+    }
+    if (yearStart != null) {
+      dataSet = dataSet.filter(function(data){
+        return data.year >= yearStart;
+      });
+    }
+    if (yearEnd != null) {
+      dataSet = dataSet.filter(function(data){
+        return data.year <= yearEnd;
+      });
+    }
   });
-
-  if (firstName != null) {
-    dataSet = dataSet.filter(function(data){
-      return data.firstName === firstName;
-    });
-  }
-  if (lastName != null) {
-    dataSet = dataSet.filter(function(data){
-      return data.lastName === lastName;
-    });
-  }
-  if (sector != null) {
-    dataSet = dataSet.filter(function(data){
-      return data.sector === sector;
-    });
-  }
-  if (employer != null) {
-    dataSet = dataSet.filter(function(data){
-      return data.employer === employer;
-    });
-  }
-  if (province != null) {
-    dataSet = dataSet.filter(function(data){
-      return data.province === province;
-    });
-  }
-  if (salaryStart != null) {
-    dataSet = dataSet.filter(function(data){
-      return data.salary >= salaryStart;
-    });
-  }
-  if (salaryEnd != null) {
-    dataSet = dataSet.filter(function(data){
-      return data.salary <= salaryStart;
-    });
-  }
-  if (yearStart != null) {
-    dataSet = dataSet.filter(function(data){
-      return data.year >= yearStart;
-    });
-  }
-  if (yearEnd != null) {
-    dataSet = dataSet.filter(function(data){
-      return data.year <= yearEnd;
-    });
-  }
-
   res.json(dataSet);
 });
 
