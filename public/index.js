@@ -61,14 +61,26 @@ function insert_into_website_table(person,tableSize)
 
 } 
 function selectedRow() {
-    console.log("lol");
     if(selectBody === null) {
         selectBody = document.createElement("tbody");
         selectBody.id = "records";
     }
+    if(this.checked === true) {
+    this.value = 'on';
     let row = document.createElement('tr');
-    row = this.parentNode.parentNode.cloneNode(true);
-    selectBody.appendChild(row);
+        row = this.parentNode.parentNode.cloneNode(true);
+        row.firstChild.firstChild.onclick = selectedRow;
+        selectBody.appendChild(row);
+    }
+    else {
+        let row = selectBody.rows;
+        for(let i = 0; i < row.length; i ++) {
+            if(this.parentNode.parentNode.cells[1] === row[i].cells[1]) {
+                selectBody.removeChild(row[i]);
+            }
+        }
+    }
+
 }
 function newTbody(currPage) {
     let i = 0;
@@ -109,7 +121,6 @@ function paging(newPage) {
     selectVal = document.getElementById('inputGroupSelect');
     currSize = parseInt(selectVal[selectVal.selectedIndex].value);
     dbSize = currSize * newPage;
-    console.log(dbSize)
     $.ajax({
         type: 'get',            //Request type
         dataType: 'json',       //Data type - we will use JSON for almost everything 
@@ -123,9 +134,7 @@ function paging(newPage) {
             CurrGroup = [];
             //console.log(data)
             for (obj in data) {
-                console.log(i)
                 if(i >= (dbSize - currSize) ) {
-                    console.log(data[obj])
                     CurrGroup.push(data[obj]);
                 }
                 i++;
@@ -136,21 +145,29 @@ function paging(newPage) {
 
 }
 $('#Salary-tab').click(function(e) {
-    selectVal = document.getElementById('inputGroupSelect');
-    currSize = parseInt(selectVal[selectVal.selectedIndex].value);
+    currSize = document.getElementById('currPage').innerHTML;
+    currSize = parseInt(currSize);
     paging(currSize);
 });
 $('#selected-tab').click(function(e) {
+    if(selectBody === null) {
+        selectBody = document.createElement('TBODY');
+        selectBody.id = "records";
+    }
     let table = document.getElementById('records');
     table.parentNode.replaceChild(selectBody,table);
 });
 $('#search-tab').click(function(e) {
+    if(searchBody === null) {
+        searchBody = document.createElement('TBODY');
+        searchBody.id = "records";
+    }
     let table = document.getElementById('records');
     table.parentNode.replaceChild(searchBody,table);
 });
 
 $('#prevPage').click(function(e) {
-    currPage = document.getElementById('currPage').innerHTML;
+    let currPage = document.getElementById('currPage').innerHTML;
     if(currPage === '1') {
         return;
     }
@@ -173,7 +190,8 @@ $('#nextPage').click(function(e) {
 $("#inputGroupSelect").change(function(e) {
     let selectSize = document.getElementById('inputGroupSelect');
     let currTableSize = parseInt(selectSize[selectSize.selectedIndex].value);
-    
+    let currPage = document.getElementById('currPage').innerHTML;
+    currPage = parseInt(currPage);
     $.ajax({
         type: 'get',            //Request type
         dataType: 'json',       //Data type - we will use JSON for almost everything 
@@ -184,10 +202,15 @@ $("#inputGroupSelect").change(function(e) {
         },
         success: function (data) {
             CurrGroup = data
-            newTbody(currTableSize);
+            paging(currPage);
+            document.getElementById('totalPages').innerHTML = Math.ceil(100 / currTableSize);
         },        
     });
     
+});
+$('#downloadTable').click(function(e) {
+    let table = document.getElementById('records');
+    console.log(table);
 });
 $("#genSearch").click(function(e) {
     toSearch = document.getElementById('genSearchVal');
@@ -200,17 +223,17 @@ $("#genSearch").click(function(e) {
 // This function will pass one string, with no spaces to backend
 // Ajax will return a json to the front end with the search results
 
-function generic_search(general_search) 
+function generic_search(uesrSearchVal) 
 {
     let selectSize = document.getElementById('inputGroupSelect');
     let currTableSize = parseInt(selectSize[selectSize.selectedIndex].value);
-    console.log(general_search)
+    console.log(uesrSearchVal)
     $.ajax({
         type: 'post',            //Request type
         dataType: 'json',       //Data type - we will use JSON for almost everything 
         url: '/search',   //The server endpoint we are connecting to
         data: {
-            general_search: general_search
+            searchVal: uesrSearchVal
         },
         success: function (data) {
             CurrGroup = data;
@@ -218,6 +241,6 @@ function generic_search(general_search)
             // [] will return if no results are found
             newTbody(currTableSize)
             // insert_into_search_table(data);
-        },        
+        },       
     });
 }
