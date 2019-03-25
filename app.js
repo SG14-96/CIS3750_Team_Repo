@@ -77,7 +77,6 @@ app.get('/index.js',function(req,res){
 
 // Firebase Functions
 
-
 // Read the entire database
 app.get('/getSalaryInformation', function(req , res){
     
@@ -87,49 +86,50 @@ app.get('/getSalaryInformation', function(req , res){
     //This works with the front end call but not via postman
     var column = req.query.sortBy;
     var count = parseInt(req.query.count);
-    console.log(count);
 
     //This works with postman
-    if (column == undefined && count == undefined) {
-      var column = req.body.fields.sortBy;
-      var count = req.body.fields.count;
-    } 
+    // if (column == undefined && count == undefined) {
+    //   var column = req.body.fields.sortBy;
+    //   var count = req.body.fields.count;
+    // } 
 
     var dbRef = firebase.database().ref('People/');
     
-    dbRef.orderByChild(column).limitToFirst(count).on("value", function(data) {
-        // console.log(data.val());
+    dbRef.orderByChild(column).
+    limitToFirst(count).on("value", function(data) {
         data.forEach(function(data) {
           data_set.push(data.val());
         });
-        res.send(data_set);
-    }, function(error) {
-        if (error) console.log(error);
-        else console.log("No error");
-        console.log("Donee");
+        res.send(data_set);    
     });
-    
 });
 
 /*
   General search for the table
 */
-app.post('/search', (req, res) => {
-  var general_search = req.body.fields.general_search;
-
-  // Modify the first character of the name to be uppercase and append the rest of the string
-  general_search = general_search.charAt(0).toUpperCase() + general_search.slice(1);
+app.get('/search', (req, res) => {
+  console.log("General");
+  //This works with the front end call but not via postman
+  var general_search = req.query.general_search;
   
-  //Begin by searching through the first name field
-  var dbRef = firebase.database().ref('People').orderBChild('firstLast').startAt(general_search).endAt(general_search+"\uf8ff");
-  dbRef.on('value', snap => {
-    var firstName_set = snap.val();
-    //If only one name is provided search through last names wiith same value
-    var dbRef = firebase.database().ref('People').orderByChild('LastName').startAt(general_search).endAt("abc\uf8ff");
-    dbRef.on('value', snap => {
-      var search_two = snap.val();
-      res.json(mergeObjects(search_one,search_two)); 
-    });
+  // This works with postman
+  if (general_search == undefined) {
+    // general_search = req.body.fields.general_search;
+  }
+
+
+  var dbRef = firebase.database().ref('People/');
+  var search_one, search_two = [];
+
+  dbRef.orderByChild('firstLast').startAt(general_search).
+  endAt(general_search+"\uf8ff").on('value', snap => {
+    search_one = snap.val();
+
+    dbRef.orderByChild('lastFirst').startAt(general_search).
+    endAt(general_search+"\uf8ff").on('value', snap => {
+        search_two = snap.val();
+        res.json(mergeObjects(search_one,search_two)); 
+      });
   });
 });
 
@@ -206,15 +206,33 @@ app.post('/advancedSearch', (req, res) => {
   res.json(dataSet);
 });
 
-// app.get('/writeToDatabase', function(req , res){
-//   for (i in people_to_add) {
-//     var person = people_to_add[i];
-//     firebase.database().ref('People/'+person.LastName+'_'+person.FirstName).set(
-//       person
-//     );
-//   }
-// }
-// });
+app.get('/update_record_select', (req, res) => {
+  //This works with the front end call but not via postman
+  var record_to_update = req.query.toUpdate;
+  var action = parseInt(req.query.selct);
+
+  // var record_to_update = req.body.fields.toUpdate;
+  // var action = req.body.fields.select
+
+  console.log(action);
+
+  var dbRef = firebase.database().ref('People/')
+
+  dbRef.orderByChild('firstLast').equalTo(record_to_update).on('value', snap => {
+    console.log(snap.val());
+    var update = snap.val();
+    update.selected = action;
+    var id = snap.key;
+
+    firebase.database().ref("People/"+id).
+    update(update, function(err) {
+      res.send();
+      
+    });
+  });
+
+
+});
 
 app.listen(portNum);
 console.log('Running app at localhost: ' + portNum);
