@@ -40,6 +40,7 @@ function insert_into_website_table(person,tableSize)
         let btm = document.createElement("input");
         btm.setAttribute('type','checkbox');
         btm.onclick = selectedRow;
+        btm.checked = person[obj].selected;
         let row = table.insertRow(-1);
         row.insertCell(0).appendChild(btm);
 
@@ -97,6 +98,7 @@ function newTbody(currPage) {
             let btm = document.createElement("input");
             btm.setAttribute('type','checkbox');
             btm.onclick = selectedRow;
+            btm.checked = CurrGroup[obj].selected;
             let row = newTbody.insertRow(-1);
             row.insertCell(0).appendChild(btm);
 
