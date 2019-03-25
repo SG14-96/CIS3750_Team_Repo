@@ -108,14 +108,19 @@ app.get('/getSalaryInformation', function(req , res){
   General search for the table
 */
 app.get('/search', (req, res) => {
-  console.log("General");
   //This works with the front end call but not via postman
-  var general_search = req.query.searchVal;
+  var search = req.query.searchVal;
+  console.log(search);  
+  var split = search.split(' ');
+  var general_search = "";
   
-  // This works with postman
-  if (general_search == undefined) {
-    // general_search = req.body.fields.general_search;
+  for (i = 0; i < split.length; i++) {
+    split[i] = split[i].charAt(0).toUpperCase() + split[i].slice(1);
+    general_search += split[i];
+    if (i+1 != split.length) general_search += "_";
   }
+
+  console.log(general_search);
 
   var dbRef = firebase.database().ref('People/');
   var search_one, search_two = [];
@@ -208,8 +213,6 @@ app.get('/update_record_select', (req, res) => {
   //This works with the front end call but not via postman
   var record_to_update = req.query.toUpdate;
   var action = req.query.select;
-
-  console.log(action);
   
   var dbRef = firebase.database().ref('People/');
 
@@ -234,11 +237,18 @@ app.get('/update_record_select', (req, res) => {
 
 app.get('/download_csv', (req, res) => {
   var dbRef = firebase.database().ref('People/');
+  var excelLine = "";
     
   dbRef.on("value", function(data) {
       data.forEach(function(data) {
-        console.logdata.val();
+        var person = data.val();
+        var firstLast = person.firstLast.split("_").join(" ");
+        var sector = person.sector.split("_").join(" ");
+        excelLine += firstLast+","+person.employer+","+sector
+        +"," + person.salary +","+person.province+","+person.year+"\n";
       });
+
+      res.json(excelLine);
   });
 });
 

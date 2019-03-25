@@ -4,13 +4,21 @@ let selectBody = null;
 let searchBody = null;
 $(document).ready(function() {
         load_main_table();
+
+        // Testing the baod
+
+        // ***********************************************
         // search_for_individuals_option("Samuel");
 
-        //Testing general search
-        // generic_search("David_Apramian");
+        // Testing general search
+        // generic_search("allan denis");
 
-        //Testing update    
+        // Testing update    
         // update_on_row_select("David_Apramian", false);
+
+        // download_csv();
+
+        // ***********************************************
 });
 
     //Load the main page of the website
@@ -275,22 +283,15 @@ function update_on_row_select(person_name, action) {
     }); 
 }
 
-function download_csv(person_name, action) {
+function download_csv() {
     // person name will be First Last, spaces = "_", caps on first letter
     $.ajax({
         type: 'get',            //Request type
         dataType: 'json',       //Data type - we will use JSON for almost everything 
         url: '/download_csv',   //The server endpoint we are connecting to
-        data: {
-
-            //Person to be updated
-            toUpdate: person_name,
-
-            //action, true when they select, faLse when they unselect
-            select: action
-        },
+        data: {},
         success: function (data) {
-            console.log("Done");
+            console.log(data);
         },        
     }); 
 }
