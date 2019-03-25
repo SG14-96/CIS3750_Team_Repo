@@ -51,10 +51,12 @@ function insert_into_website_table(person,tableSize)
         if(i >= person.length || i === tableSize) {
             break;
         }
+        console.log(person);
         let btm = document.createElement("input");
         btm.setAttribute('type','checkbox');
         btm.onclick = selectedRow;
-        btm.checked = person[obj].selected;
+        
+        btm.checked = JSON.parse(person[obj].selected);
         let row = table.insertRow(-1);
         row.insertCell(0).appendChild(btm);
 
@@ -97,6 +99,7 @@ function selectedRow() {
         for(let i = 0; i < row.length; i ++) {
             if(this.parentNode.parentNode.cells[1].innerHTML === row[i].cells[1].innerHTML) {
                 selectBody.removeChild(row[i]);
+                console.log(name);
                 update_on_row_select(name,false);
             }
         }
@@ -279,6 +282,7 @@ function generic_search(uesrSearchVal)
 }
 
 function update_on_row_select(person_name, action) {
+
     // person name will be First Last, spaces = "_", caps on first letter
     $.ajax({
         type: 'get',            //Request type

@@ -96,9 +96,10 @@ app.get('/getSalaryInformation', function(req , res){
     var dbRef = firebase.database().ref('People/');
     
     dbRef.orderByChild(column).
-    limitToFirst(count).on("value", function(data) {
+    limitToFirst(count).once("value", function(data) {
         data.forEach(function(data) {
           data_set.push(data.val());
+          // console.log(data.val());
         });
         res.send(data_set);    
     });
@@ -126,11 +127,11 @@ app.get('/search', (req, res) => {
   var search_one, search_two = [];
 
   dbRef.orderByChild('firstLast').startAt(general_search).
-  endAt(general_search+"\uf8ff").on('value', snap => {
+  endAt(general_search+"\uf8ff").once('value', snap => {
     search_one = snap.val();
 
     dbRef.orderByChild('lastFirst').startAt(general_search).
-    endAt(general_search+"\uf8ff").on('value', snap => {
+    endAt(general_search+"\uf8ff").once('value', snap => {
         search_two = snap.val();
         res.json(mergeObjects(search_one,search_two)); 
       });
@@ -213,10 +214,12 @@ app.get('/update_record_select', (req, res) => {
   //This works with the front end call but not via postman
   var record_to_update = req.query.toUpdate;
   var action = req.query.select;
+
+  console.log("Action is " + action);
   
   var dbRef = firebase.database().ref('People/');
 
-  dbRef.orderByChild('firstLast').equalTo(record_to_update).on('value', snap => {
+  dbRef.orderByChild('firstLast').equalTo(record_to_update).once('value', snap => {
     var update;
     var id;
 
