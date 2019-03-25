@@ -110,13 +110,12 @@ app.get('/getSalaryInformation', function(req , res){
 app.get('/search', (req, res) => {
   console.log("General");
   //This works with the front end call but not via postman
-  var general_search = req.query.general_search;
+  var general_search = req.query.searchVal;
   
   // This works with postman
   if (general_search == undefined) {
     // general_search = req.body.fields.general_search;
   }
-
 
   var dbRef = firebase.database().ref('People/');
   var search_one, search_two = [];
@@ -208,29 +207,39 @@ app.get('/advancedSearch', (req, res) => {
 app.get('/update_record_select', (req, res) => {
   //This works with the front end call but not via postman
   var record_to_update = req.query.toUpdate;
-  var action = parseInt(req.query.selct);
-
-  // var record_to_update = req.body.fields.toUpdate;
-  // var action = req.body.fields.select
+  var action = req.query.select;
 
   console.log(action);
-
-  var dbRef = firebase.database().ref('People/')
+  
+  var dbRef = firebase.database().ref('People/');
 
   dbRef.orderByChild('firstLast').equalTo(record_to_update).on('value', snap => {
-    console.log(snap.val());
-    var update = snap.val();
-    update.selected = action;
-    var id = snap.key;
+    var update;
+    var id;
 
-    firebase.database().ref("People/"+id).
-    update(update, function(err) {
+    snap.forEach(data => {
+      update = data.val();
+      id = data.key;
+    })
+
+    // console.log(update);
+    update.selected = action;
+    console.log(id);
+
+    firebase.database().ref("People/"+id).set(update, function(err) {
       res.send();
-      
     });
   });
+});
 
-
+app.get('/download_csv', (req, res) => {
+  var dbRef = firebase.database().ref('People/');
+    
+  dbRef.on("value", function(data) {
+      data.forEach(function(data) {
+        console.logdata.val();
+      });
+  });
 });
 
 app.listen(portNum);

@@ -9,8 +9,8 @@ $(document).ready(function() {
         //Testing general search
         // generic_search("David_Apramian");
 
-        //Testing update
-        // update_on_row_select("David_Apramian", true);
+        //Testing update    
+        // update_on_row_select("David_Apramian", false);
 });
 
     //Load the main page of the website
@@ -29,6 +29,7 @@ function load_main_table()
             count: number_people
         },
         success: function (data) {
+            console.log(data);
             CurrGroup = data
             insert_into_website_table(CurrGroup,10);
         },        
@@ -260,6 +261,26 @@ function update_on_row_select(person_name, action) {
         type: 'get',            //Request type
         dataType: 'json',       //Data type - we will use JSON for almost everything 
         url: '/update_record_select',   //The server endpoint we are connecting to
+        data: {
+
+            //Person to be updated
+            toUpdate: person_name,
+
+            //action, true when they select, faLse when they unselect
+            select: action
+        },
+        success: function (data) {
+            console.log("Done");
+        },        
+    }); 
+}
+
+function download_csv(person_name, action) {
+    // person name will be First Last, spaces = "_", caps on first letter
+    $.ajax({
+        type: 'get',            //Request type
+        dataType: 'json',       //Data type - we will use JSON for almost everything 
+        url: '/download_csv',   //The server endpoint we are connecting to
         data: {
 
             //Person to be updated
