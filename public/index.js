@@ -1,5 +1,7 @@
 // Backend Call
-CurrGroup = null;
+let CurrGroup = null;
+let selectBody = null;
+let searchBody = null;
 $(document).ready(function() {
         load_main_table();
         // search_for_individuals_option("Samuel");
@@ -53,29 +55,31 @@ function insert_into_website_table(person,tableSize)
         //person.innerHTML = person_array[i].First;
         i++;
     }
-    let size = Object.keys(person).length;
-    document.getElementById('totalPages').innerHTML = Math.ceil(size/tableSize);
+    //let size = Object.keys(person).length;
+    document.getElementById('totalPages').innerHTML = 10;
 
 
 } 
 function selectedRow() {
     console.log("lol");
+    if(selectBody === null) {
+        selectBody = document.createElement("tbody");
+        selectBody.id = "records";
+    }
+    let row = document.createElement('tr');
+    row = this.parentNode.parentNode.cloneNode(true);
+    selectBody.appendChild(row);
 }
-function newPage(currPage,selectedPage) {
+function newTbody(currPage) {
     let i = 0;
     let table = document.getElementById('records');
-    let selectSize = document.getElementById('inputGroupSelect');
-    let currTableSize = parseInt(selectSize[selectSize.selectedIndex].value);
-    let beginIndex = currPage * currTableSize;
 
     let newTbody = document.createElement('TBODY');
     newTbody.id = "records";
 
-    let tableSize = selectedPage * currTableSize;
 
     for (obj in CurrGroup) {
-        if( i >= beginIndex) {
-            if(i >= CurrGroup.length || i === tableSize) {
+            if(i >= CurrGroup.length || i === currPage) {
                 break;
             }
             let btm = document.createElement("input");
@@ -94,7 +98,6 @@ function newPage(currPage,selectedPage) {
             row.insertCell(5).innerHTML = CurrGroup[obj].province;
             row.insertCell(6).innerHTML = CurrGroup[obj].year;
             //person.innerHTML = person_array[i].First;
-        }
         i++;
     }
     table.parentNode.replaceChild(newTbody,table);
@@ -102,15 +105,50 @@ function newPage(currPage,selectedPage) {
     
 
 }
+function paging(newPage) {
+    selectVal = document.getElementById('inputGroupSelect');
+    currSize = parseInt(selectVal[selectVal.selectedIndex].value);
+    dbSize = currSize * newPage;
+    console.log(dbSize)
+    $.ajax({
+        type: 'get',            //Request type
+        dataType: 'json',       //Data type - we will use JSON for almost everything 
+        url: '/getSalaryInformation',   //The server endpoint we are connecting to 
+        data: {   
+            sortBy: "firstName",
+            count: dbSize
+        },
+        success: function (data) {
+            let i = 0;
+            CurrGroup = [];
+            //console.log(data)
+            for (obj in data) {
+                console.log(i)
+                if(i >= (dbSize - currSize) ) {
+                    console.log(data[obj])
+                    CurrGroup.push(data[obj]);
+                }
+                i++;
+            }
+            newTbody(currSize);
+        },        
+    });
+
+}
 $('#Salary-tab').click(function(e) {
-    //insert_into_website_table(CurrGroup,document.getElementById('currPos').name);
+    selectVal = document.getElementById('inputGroupSelect');
+    currSize = parseInt(selectVal[selectVal.selectedIndex].value);
+    paging(currSize);
 });
 $('#selected-tab').click(function(e) {
-    console.log("yay")
+    let table = document.getElementById('records');
+    table.parentNode.replaceChild(selectBody,table);
 });
-$('#selected-tab').click(function(e) {
-    console.log("yay")
+$('#search-tab').click(function(e) {
+    let table = document.getElementById('records');
+    table.parentNode.replaceChild(searchBody,table);
 });
+
 $('#prevPage').click(function(e) {
     currPage = document.getElementById('currPage').innerHTML;
     if(currPage === '1') {
@@ -119,7 +157,7 @@ $('#prevPage').click(function(e) {
     currPage = parseInt(currPage);
     
     document.getElementById('currPage').innerHTML = currPage - 1;
-    newPage(currPage - 2,currPage - 1)
+    paging(currPage - 1)
 
 });
 $('#nextPage').click(function(e) {
@@ -130,17 +168,33 @@ $('#nextPage').click(function(e) {
     currPage = parseInt(currPage);
     nextPage = currPage + 1;
     document.getElementById('currPage').innerHTML = nextPage;
-    newPage(currPage,nextPage)
+    paging(nextPage)
 });
 $("#inputGroupSelect").change(function(e) {
     let selectSize = document.getElementById('inputGroupSelect');
     let currTableSize = parseInt(selectSize[selectSize.selectedIndex].value);
-    let totalPage = document.getElementById('totalPages');
-    let currentPage = parseInt(document.getElementById('currPage').innerHTML);
     
-    totalPage.innerHTML = Math.ceil(Object.keys(CurrGroup).length/currTableSize);
+    $.ajax({
+        type: 'get',            //Request type
+        dataType: 'json',       //Data type - we will use JSON for almost everything 
+        url: '/getSalaryInformation',   //The server endpoint we are connecting to 
+        data: {   
+            sortBy: "firstName",
+            count: currTableSize
+        },
+        success: function (data) {
+            CurrGroup = data
+            newTbody(currTableSize);
+        },        
+    });
+    
+});
+$("#genSearch").click(function(e) {
+    toSearch = document.getElementById('genSearchVal');
+    currPage = document.getElementById('currPage').innerHTML;
+    CurrGroup = generic_search(toSearch.value);
 
-    newPage(currentPage - 1,currentPage);
+    
 });
 // The user will insert a generic search
 // This function will pass one string, with no spaces to backend
@@ -148,21 +202,21 @@ $("#inputGroupSelect").change(function(e) {
 
 function generic_search(general_search) 
 {
-    var general_search = 'search_bar';
-
-    // TODO: Change all spaces in the string in generic_search to '_'
-
+    let selectSize = document.getElementById('inputGroupSelect');
+    let currTableSize = parseInt(selectSize[selectSize.selectedIndex].value);
+    console.log(general_search)
     $.ajax({
-        type: 'get',            //Request type
+        type: 'post',            //Request type
         dataType: 'json',       //Data type - we will use JSON for almost everything 
-        url: '/search_for_individuals_option',   //The server endpoint we are connecting to
+        url: '/search',   //The server endpoint we are connecting to
         data: {
             general_search: general_search
         },
         success: function (data) {
+            CurrGroup = data;
             // Ajax will return a json to the front end with the search results
             // [] will return if no results are found
-            console.log(data);
+            newTbody(currTableSize)
             // insert_into_search_table(data);
         },        
     });
