@@ -6,6 +6,9 @@ var path = require('path');
 var FireBaseAdmin = require('firebase-admin');
 var firebase = require("firebase");
 
+//------------ PLOTLY SETUP ---------
+var plotly = require('plotly')('CameronGuitard', 'JltZxY0tf5U4rDGb01rW');
+
 // Initialize Firebase Connection
 // Account set up with Samuel Denton email
 var config = {
@@ -59,6 +62,10 @@ app.get('/img/teamImage.jpg',function(req,res){
 app.get('/img/twitterLogo.png',function(req,res){
   res.sendFile(path.join(__dirname+'/public/img/twitterLogo.png'));
 });
+//The hack for using the graph
+app.get('/img/graph.png',function(req,res){
+  res.sendFile(path.join(__dirname+'/public/img/graph.png'));
+});
 
 // Send Style, do not change
 app.get('/style.css',function(req,res){
@@ -79,7 +86,7 @@ app.get('/index.js',function(req,res){
 
 // Read the entire database
 app.get('/getSalaryInformation', function(req , res){
-    
+
     var data_set = [];
     var data_set_2 = [];
 
@@ -91,16 +98,16 @@ app.get('/getSalaryInformation', function(req , res){
     // if (column == undefined && count == undefined) {
     //   var column = req.body.fields.sortBy;
     //   var count = req.body.fields.count;
-    // } 
+    // }
 
     var dbRef = firebase.database().ref('People/');
-    
+
     dbRef.orderByChild(column).
     limitToFirst(count).on("value", function(data) {
         data.forEach(function(data) {
           data_set.push(data.val());
         });
-        res.send(data_set);    
+        res.send(data_set);
     });
 });
 
@@ -111,7 +118,7 @@ app.get('/search', (req, res) => {
   console.log("General");
   //This works with the front end call but not via postman
   var general_search = req.query.general_search;
-  
+
   // This works with postman
   if (general_search == undefined) {
     // general_search = req.body.fields.general_search;
@@ -128,7 +135,7 @@ app.get('/search', (req, res) => {
     dbRef.orderByChild('lastFirst').startAt(general_search).
     endAt(general_search+"\uf8ff").on('value', snap => {
         search_two = snap.val();
-        res.json(mergeObjects(search_one,search_two)); 
+        res.json(mergeObjects(search_one,search_two));
       });
   });
 });
@@ -226,11 +233,52 @@ app.get('/update_record_select', (req, res) => {
     firebase.database().ref("People/"+id).
     update(update, function(err) {
       res.send();
-      
+
     });
   });
 
 
+});
+
+app.get('/create_graph', (req,res) =>{
+  console.log(req.query);
+console.log(req.query.type);
+
+    var trace1 = {
+      x: req.query.xAxis,
+      y: req.query.yAxis,
+      type: req.query.type
+    };
+
+  var layout = {
+        title: {
+          text: req.query.title,
+        },
+        xaxis: {
+          title: {
+            text: req.query.xAxisName,
+          },
+        },
+        yaxis: {
+          title: {
+            text: req.query.yAxisName,
+          }
+        }
+      };
+
+  var figure = { 'data': [trace1],'layout': layout};
+
+  var imgOpts = {
+    format: 'png',
+    width: 500,
+    height: 250
+  };
+
+  plotly.getImage(figure, imgOpts, function (error, imageStream) {
+    var fileStream = fs.createWriteStream(__dirname+'/public/img/graph.png');
+    imageStream.pipe(fileStream);
+    res.send({});
+  });
 });
 
 app.listen(portNum);

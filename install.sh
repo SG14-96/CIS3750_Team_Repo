@@ -6,11 +6,13 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
         sudo npm install npm -g 
         npm install express --save
         npm install firebase-admin --save
+	npm install plotly --save
 elif [[ "$OSTYPE" == "darwin"* ]]; then
         brew install node@8
         sudo npm install npm -g 
         npm install express --save
         npm install firebase-admin --save
+	npm install plotly --save
 else
     echo "OS not recognized"
 

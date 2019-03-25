@@ -14,7 +14,7 @@ $(document).ready(function() {
 });
 
     //Load the main page of the website
-function load_main_table() 
+function load_main_table()
 {
     var number_people = 10;
     var sortBy = "firstName";
@@ -22,16 +22,16 @@ function load_main_table()
     //  what the user wants to sort the table by
     $.ajax({
         type: 'get',            //Request type
-        dataType: 'json',       //Data type - we will use JSON for almost everything 
-        url: '/getSalaryInformation',   //The server endpoint we are connecting to 
-        data: {   
+        dataType: 'json',       //Data type - we will use JSON for almost everything
+        url: '/getSalaryInformation',   //The server endpoint we are connecting to
+        data: {
             sortBy: sortBy,
             count: number_people
         },
         success: function (data) {
             CurrGroup = data
             insert_into_website_table(CurrGroup,10);
-        },        
+        },
     });
 }
 
@@ -54,8 +54,8 @@ function insert_into_website_table(person,tableSize)
         row.insertCell(2).innerHTML = person[obj].employer;
         sectorName = person[obj].sector.split('_');
         row.insertCell(3).innerHTML = sectorName.join(" ");
-        
-        row.insertCell(4).innerHTML = person[obj].salary;  
+
+        row.insertCell(4).innerHTML = person[obj].salary;
         row.insertCell(5).innerHTML = person[obj].province;
         row.insertCell(6).innerHTML = person[obj].year;
         //person.innerHTML = person_array[i].First;
@@ -65,7 +65,7 @@ function insert_into_website_table(person,tableSize)
     document.getElementById('totalPages').innerHTML = 10;
 
 
-} 
+}
 function selectedRow() {
     if(selectBody === null) {
         selectBody = document.createElement("tbody");
@@ -111,8 +111,8 @@ function newTbody(currPage) {
             row.insertCell(2).innerHTML = CurrGroup[obj].employer;
             sectorName = CurrGroup[obj].sector.split('_');
             row.insertCell(3).innerHTML = sectorName.join(" ");
-            
-            row.insertCell(4).innerHTML = CurrGroup[obj].salary;  
+
+            row.insertCell(4).innerHTML = CurrGroup[obj].salary;
             row.insertCell(5).innerHTML = CurrGroup[obj].province;
             row.insertCell(6).innerHTML = CurrGroup[obj].year;
             //person.innerHTML = person_array[i].First;
@@ -120,7 +120,7 @@ function newTbody(currPage) {
     }
     table.parentNode.replaceChild(newTbody,table);
 
-    
+
 
 }
 function paging(newPage) {
@@ -129,9 +129,9 @@ function paging(newPage) {
     dbSize = currSize * newPage;
     $.ajax({
         type: 'get',            //Request type
-        dataType: 'json',       //Data type - we will use JSON for almost everything 
-        url: '/getSalaryInformation',   //The server endpoint we are connecting to 
-        data: {   
+        dataType: 'json',       //Data type - we will use JSON for almost everything
+        url: '/getSalaryInformation',   //The server endpoint we are connecting to
+        data: {
             sortBy: "firstName",
             count: dbSize
         },
@@ -146,7 +146,7 @@ function paging(newPage) {
                 i++;
             }
             newTbody(currSize);
-        },        
+        },
     });
 
 }
@@ -178,7 +178,7 @@ $('#prevPage').click(function(e) {
         return;
     }
     currPage = parseInt(currPage);
-    
+
     document.getElementById('currPage').innerHTML = currPage - 1;
     paging(currPage - 1)
 
@@ -200,9 +200,9 @@ $("#inputGroupSelect").change(function(e) {
     currPage = parseInt(currPage);
     $.ajax({
         type: 'get',            //Request type
-        dataType: 'json',       //Data type - we will use JSON for almost everything 
-        url: '/getSalaryInformation',   //The server endpoint we are connecting to 
-        data: {   
+        dataType: 'json',       //Data type - we will use JSON for almost everything
+        url: '/getSalaryInformation',   //The server endpoint we are connecting to
+        data: {
             sortBy: "firstName",
             count: currTableSize
         },
@@ -210,9 +210,9 @@ $("#inputGroupSelect").change(function(e) {
             CurrGroup = data
             paging(currPage);
             document.getElementById('totalPages').innerHTML = Math.ceil(100 / currTableSize);
-        },        
+        },
     });
-    
+
 });
 $('#downloadTable').click(function(e) {
     let table = document.getElementById('records');
@@ -223,13 +223,13 @@ $("#genSearch").click(function(e) {
     currPage = document.getElementById('currPage').innerHTML;
     CurrGroup = generic_search(toSearch.value);
 
-    
+
 });
 // The user will insert a generic search
 // This function will pass one string, with no spaces to backend
 // Ajax will return a json to the front end with the search results
 
-function generic_search(uesrSearchVal) 
+function generic_search(uesrSearchVal)
 {
     console.log("general");
     let selectSize = document.getElementById('inputGroupSelect');
@@ -237,7 +237,7 @@ function generic_search(uesrSearchVal)
     console.log(uesrSearchVal)
     $.ajax({
         type: 'get',            //Request type
-        dataType: 'json',       //Data type - we will use JSON for almost everything 
+        dataType: 'json',       //Data type - we will use JSON for almost everything
         url: '/search',   //The server endpoint we are connecting to
         data: {
             searchVal: uesrSearchVal
@@ -248,7 +248,7 @@ function generic_search(uesrSearchVal)
             // [] will return if no results are found
             newTbody(currTableSize)
             // insert_into_search_table(data);
-        },       
+        },
     });
 }
 
@@ -256,7 +256,7 @@ function update_on_row_select(person_name, action) {
     // person name will be First Last, spaces = "_", caps on first letter
     $.ajax({
         type: 'get',            //Request type
-        dataType: 'json',       //Data type - we will use JSON for almost everything 
+        dataType: 'json',       //Data type - we will use JSON for almost everything
         url: '/update_record_select',   //The server endpoint we are connecting to
         data: {
 
@@ -268,6 +268,41 @@ function update_on_row_select(person_name, action) {
         },
         success: function (data) {
             console.log("Done");
-        },        
-    }); 
+        },
+    });
+}
+
+function create_graph(){
+
+  let graphType = "scatter",
+    xAxis = [],
+    yAxis = [],
+    xAxisName = "X-Axis",
+    yAxisName = "Y-Axis",
+    title = xAxisName + " VS " + yAxisName +" " + graphType + " plot";
+
+    xAxis =  [1, 2, 3, 4];
+    yAxis =  [10, 15, 13, 17];
+  $.ajax({
+      type:'get',
+      dataType:'json',
+      url:'/create_graph',
+      data: {
+        type:graphType,
+        xAxis:xAxis,
+        yAxis:yAxis,
+        xAxisName,
+        yAxisName,
+        title
+      },
+      success:function(data){
+        let selectSize = document.getElementById('TESTGRAPHING'),//CHANGE This to actual DIV
+          graph = document.createElement("IMG");
+        graph.src = 'img/graph.png';
+        selectSize.appendChild(graph);
+      },
+      error:function(data){
+        console.log("Error");
+      },
+  })
 }
