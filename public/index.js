@@ -443,6 +443,9 @@ function getAllRecords() {
         },
         success: function (data) {
             allData = data;
+            for(obj in allData) {
+                update_on_row_select(allData[obj].firstLast,false);
+            }
         },        
     });
 }
