@@ -38,17 +38,29 @@
             </ul>
         </div>
     </nav>
-    <div class="container"id="aboutPage">Where about website goes</div>
+    <br>
+    <div class="container"id="aboutPage">
+        <div class="row border rounded border-info w-50 p-3">
+            <img class="rounded float-right col-3" src="/img/logo.png" width="80" height="80" alt="">
+            <p class="text-left col-9">
+            This website contains Public Salary Employees for people who work across Canada. You can view all records in the database in the 
+            table below or use 1 of 2 search options to refine your results. You can also click the checkbox’s in the left most column to store certain
+            rows. Additionally, look at the Graph/Stats panel to see statistical analysis for the data below. 
+            We hope you find this website useful to your needs and it aids you in your research efforts! <br/>
+            </p>
+        </div>
+    </div>
+    <br>
     <div class="container border">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="Salary-tab" data-toggle="tab" href="#Salary" role="tab" aria-controls="Salary" aria-selected="true">Salary Information</a>
+                <a class="nav-link active" name="tabs" id="Salary-tab" data-toggle="tab" href="#on" role="tab" aria-controls="Salary" aria-selected="true">Salary Information</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="selected-tab" data-toggle="tab" href="#selected" role="tab" aria-controls="selected" aria-selected="false">Selected Set</a>
+                <a class="nav-link" name="tabs" id="selected-tab" data-toggle="tab" href="#off" role="tab" aria-controls="selected" aria-selected="false">Selected Set</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="search-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Advance Search Results</a>
+                <a class="nav-link" name="tabs" id="search-tab" data-toggle="tab" href="#off" role="tab" aria-controls="contact" aria-selected="false">Advance Search Results</a>
             </li>
         </ul>
         <br>
@@ -64,20 +76,20 @@
                             <div class="form-row">
                                 <div class="col-md-6">
                                     <label for="firstName">First Name</label>
-                                    <input type="email" class="form-control" id="firstName"  placeholder="John">
+                                    <input type="text" class="form-control" id="firstName"  placeholder="John">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="lastName">Last Name</label>
-                                    <input type="email" class="form-control" id="lastName"  placeholder="Doe">
+                                    <input type="text" class="form-control" id="lastName"  placeholder="Doe">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="sector">Sector</label>
-                                <input type="email" class="form-control col-md-5" id="sector"  placeholder="University">
+                                <input type="text" class="form-control col-md-5" id="sector"  placeholder="University">
 
                                 <label for="employer">Employer</label>
-                                <input type="email" class="form-control col-md-5" id="employer"  placeholder="Guelph">
+                                <input type="text" class="form-control col-md-5" id="employer"  placeholder="Guelph">
 
                                 <label for="prov">Province</label>
                                 <select class="form-control col-md-3" id="prov">
@@ -89,21 +101,21 @@
                                 <div class="col-md-6">
                                         <label for="totalSalary">Salary</label>
                                         <label id='totalSalary'for="minSalary">From</label>
-                                        <input type="email" class="form-control" id="minSalary"  placeholder="$0">
+                                        <input type="text" class="form-control" id="minSalary"  placeholder="$0">
                                 </div>
                                 <div class="col-md-6">
                                         <label for="minSalary">To</label>
-                                        <input type="email" class="form-control" id="maxSalary"  placeholder="$0">
+                                        <input type="text" class="form-control" id="maxSalary"  placeholder="$0">
                                 </div>
                             </div>
                             <div class="form-row">
                                     <div class="col-md-6">
                                             <label for="minYear">Year:From</label>
-                                            <input type="email" class="form-control" id="minYear"  placeholder="1996">
+                                            <input type="text" class="form-control" id="minYear"  placeholder="1996">
                                     </div>
                                     <div class="col-md-6">
                                             <label for="maxYear">To</label>
-                                            <input type="email" class="form-control" id="maxYear"  placeholder="2018">
+                                            <input type="text" class="form-control" id="maxYear"  placeholder="2018">
                                     </div>
                             </div>
                             <br>
@@ -112,7 +124,7 @@
                                     <button type="reset" class="btn btn-primary">Clear</button>
                                 </div>
                                 <div class="col-1">
-                                    <button type="submit" class="btn btn-primary">Search</button>
+                                    <button id="AdvanceSearchBtm"type="button" class="btn btn-primary">Search</button>
                                 </div>
                             </div>
                         </form>
@@ -124,6 +136,9 @@
                     <button id="genSearch" class="btn btn-outline-secondary" type="button">Search</button>
                 </div>
                 <input id="genSearchVal"type="text" class="form-control col-2" placeholder="Search" aria-label="Search">
+                <div class=input-group-append>
+                    <button id="clearSearch" class="btn btn-outline-secondary" type="button">Clear</button>
+                </div>
             </div>
             <div class="row justify-content-center">
                 <table id=salaryTable class="table table-hover table-bordered">

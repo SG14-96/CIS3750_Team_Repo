@@ -1,16 +1,26 @@
 // Backend Call
-let CurrGroup = null;
-let selectBody = null;
-let searchBody = null;
+let currGroup = null;
+let salaryGroup = null;
+let selectGroup = [];
+let searchGroup = [];
+let currTab = 0;
 $(document).ready(function() {
         load_main_table();
+
+        // Testing the baod
+
+        // ***********************************************
         // search_for_individuals_option("Samuel");
 
-        //Testing general search
-        // generic_search("David_Apramian");
+        // Testing general search
+        // generic_search("allan denis");
 
-        //Testing update
-        // update_on_row_select("David_Apramian", true);
+        // Testing update    
+        // update_on_row_select("David_Apramian", false);
+
+        // download_csv();
+
+        // ***********************************************
 });
 
     //Load the main page of the website
@@ -29,66 +39,76 @@ function load_main_table()
             count: number_people
         },
         success: function (data) {
-            CurrGroup = data
-            insert_into_website_table(CurrGroup,10);
-        },
+            salaryGroup = data
+            currGroup = salaryGroup;
+            insert_into_website_table(10);
+        },        
     });
 }
 
-function insert_into_website_table(person,tableSize)
+function insert_into_website_table(tableSize)
 {
     i = 0;
     let table = document.getElementById('records');
-    for (obj in person) {
-        if(i >= person.length || i === tableSize) {
+    for (obj in salaryGroup) {
+        if(i >= salaryGroup.length || i === tableSize) {
             break;
         }
         let btm = document.createElement("input");
         btm.setAttribute('type','checkbox');
         btm.onclick = selectedRow;
+        
+        btm.checked = JSON.parse(salaryGroup[obj].selected);
+        if(btm.checked === true) {
+            btm.checked = false;
+            salaryGroup[obj].selected = false;
+            update_on_row_select(salaryGroup[obj].firstLast,'false');
+        }
         let row = table.insertRow(-1);
         row.insertCell(0).appendChild(btm);
 
-        fullName = person[obj].firstLast.split('_');
+        fullName = salaryGroup[obj].firstLast.split('_');
         row.insertCell(1).innerHTML = fullName.join(" ");
-        row.insertCell(2).innerHTML = person[obj].employer;
-        sectorName = person[obj].sector.split('_');
-        row.insertCell(3).innerHTML = sectorName.join(" ");
-
-        row.insertCell(4).innerHTML = person[obj].salary;
-        row.insertCell(5).innerHTML = person[obj].province;
-        row.insertCell(6).innerHTML = person[obj].year;
-        //person.innerHTML = person_array[i].First;
+        row.insertCell(2).innerHTML = salaryGroup[obj].employer;
+        sectorName = salaryGroup[obj].sector.split('_');
+        row.insertCell(3).innerHTML = sectorName.join(" ");        
+        row.insertCell(4).innerHTML = salaryGroup[obj].salary;  
+        row.insertCell(5).innerHTML = salaryGroup[obj].province;
+        row.insertCell(6).innerHTML = salaryGroup[obj].year;
+        //salaryGroup.innerHTML = person_array[i].First;
         i++;
     }
-    //let size = Object.keys(person).length;
+    //let size = Object.keys(salaryGroup).length;
     document.getElementById('totalPages').innerHTML = 10;
-
-
-}
+} 
 function selectedRow() {
-    if(selectBody === null) {
-        selectBody = document.createElement("tbody");
-        selectBody.id = "records";
-    }
-    if(this.checked === true) {
-    this.value = 'on';
-    let row = document.createElement('tr');
-        row = this.parentNode.parentNode.cloneNode(true);
-        row.firstChild.firstChild.onclick = selectedRow;
-        selectBody.appendChild(row);
-    }
-    else {
-        let row = selectBody.rows;
-        for(let i = 0; i < row.length; i ++) {
-            if(this.parentNode.parentNode.cells[1] === row[i].cells[1]) {
-                selectBody.removeChild(row[i]);
+    let name = this.parentNode.parentNode.cells[1].innerHTML;
+    
+    name = name.split(" ");
+    name = name.join("_");
+    for(obj in currGroup) {
+        if(name === currGroup[obj].firstLast) {
+            currGroup[obj].selected = this.checked;
+            if(currGroup[obj].selected === true) {
+                let str = JSON.stringify(currGroup[obj]);
+                salaryGroup[obj].selected = true;
+                selectGroup.push(JSON.parse(str));
+                update_on_row_select(name,'true');
             }
+            else {
+                for(let i = 0; i < selectGroup.length; i ++) {
+                    if(name === selectGroup[i].firstLast) {
+                        selectGroup.splice(i,1);
+                        update_on_row_select(name,'false');
+                    }
+                }
+            }
+
         }
     }
-
+    console.log(selectGroup)
 }
-function newTbody(currPage) {
+function newTbody(currSize,group) {
     let i = 0;
     let table = document.getElementById('records');
 
@@ -96,82 +116,109 @@ function newTbody(currPage) {
     newTbody.id = "records";
 
 
-    for (obj in CurrGroup) {
-            if(i >= CurrGroup.length || i === currPage) {
+    for (obj in group) {
+            if(i >= group.length || i === currSize) {
                 break;
             }
             let btm = document.createElement("input");
             btm.setAttribute('type','checkbox');
             btm.onclick = selectedRow;
+            btm.checked = JSON.parse(group[obj].selected);
             let row = newTbody.insertRow(-1);
             row.insertCell(0).appendChild(btm);
 
-            fullName = CurrGroup[obj].firstLast.split('_');
+            fullName = group[obj].firstLast.split('_');
             row.insertCell(1).innerHTML = fullName.join(" ");
-            row.insertCell(2).innerHTML = CurrGroup[obj].employer;
-            sectorName = CurrGroup[obj].sector.split('_');
+            row.insertCell(2).innerHTML = group[obj].employer;
+            sectorName = group[obj].sector.split('_');
             row.insertCell(3).innerHTML = sectorName.join(" ");
-
-            row.insertCell(4).innerHTML = CurrGroup[obj].salary;
-            row.insertCell(5).innerHTML = CurrGroup[obj].province;
-            row.insertCell(6).innerHTML = CurrGroup[obj].year;
+            row.insertCell(4).innerHTML = group[obj].salary;  
+            row.insertCell(5).innerHTML = group[obj].province;
+            row.insertCell(6).innerHTML = group[obj].year;
             //person.innerHTML = person_array[i].First;
         i++;
     }
     table.parentNode.replaceChild(newTbody,table);
-
-
 
 }
 function paging(newPage) {
     selectVal = document.getElementById('inputGroupSelect');
     currSize = parseInt(selectVal[selectVal.selectedIndex].value);
     dbSize = currSize * newPage;
-    $.ajax({
-        type: 'get',            //Request type
-        dataType: 'json',       //Data type - we will use JSON for almost everything
-        url: '/getSalaryInformation',   //The server endpoint we are connecting to
-        data: {
-            sortBy: "firstName",
-            count: dbSize
-        },
-        success: function (data) {
-            let i = 0;
-            CurrGroup = [];
-            //console.log(data)
-            for (obj in data) {
-                if(i >= (dbSize - currSize) ) {
-                    CurrGroup.push(data[obj]);
+    if(currTab == 0) {
+        $.ajax({
+            type: 'get',            //Request type
+            dataType: 'json',       //Data type - we will use JSON for almost everything 
+            url: '/getSalaryInformation',   //The server endpoint we are connecting to 
+            data: {   
+                sortBy: "firstName",
+                count: dbSize
+            },
+            success: function (data) {
+                let i = 0;
+                let tempGroup = [];
+                //console.log(data)
+                for (obj in data) {
+                    if(i >= (dbSize - currSize) ) {
+                        tempGroup.push(data[obj]);
+                    }
+                    i++;
                 }
-                i++;
+                currGroup = tempGroup;
+                salaryGroup = currGroup;
+                newTbody(currSize,currGroup);
+            },        
+        });
+    }
+    else {
+        let i = 0;
+        let tempGroup = []
+        for(obj in currGroup) {
+            if(i >= currSize * (newPage - 1)) {
+                console.log(obj)
+                tempGroup.push(currGroup[obj]);
             }
-            newTbody(currSize);
-        },
-    });
-
+            i++;
+        }
+        newTbody(currSize,tempGroup);
+    }
 }
+$("#clearSearch").click(function(e) {
+    toSearch = document.getElementById('genSearchVal');
+    currPage = document.getElementById('currPage').innerHTML;
+    toSearch.value = "";
+    paging(parseInt(currPage),currTab);
+});
 $('#Salary-tab').click(function(e) {
-    currSize = document.getElementById('currPage').innerHTML;
-    currSize = parseInt(currSize);
-    paging(currSize);
+    e.preventDefault();
+    selectVal = document.getElementById('inputGroupSelect');
+    currSize = parseInt(selectVal[selectVal.selectedIndex].value);
+    currGroup = salaryGroup;
+    currTab = 0;
+    paging(1);
+    document.getElementById('totalPages').innerHTML = Math.ceil(100 / currSize); 
 });
 $('#selected-tab').click(function(e) {
-    if(selectBody === null) {
-        selectBody = document.createElement('TBODY');
-        selectBody.id = "records";
-    }
-    let table = document.getElementById('records');
-    table.parentNode.replaceChild(selectBody,table);
+    e.preventDefault();
+    selectVal = document.getElementById('inputGroupSelect');
+    currSize = parseInt(selectVal[selectVal.selectedIndex].value);
+    currGroup = selectGroup;
+    currTab = 1;
+    newTbody(currSize,selectGroup);
+    document.getElementById('currPage').innerHTML = 1;
+    let page = Math.ceil(searchGroup.length / currSize);
+    document.getElementById('totalPages').innerHTML = page = Math.ceil(searchGroup.length / currSize) !== 0 ? page:1;
 });
 $('#search-tab').click(function(e) {
-    if(searchBody === null) {
-        searchBody = document.createElement('TBODY');
-        searchBody.id = "records";
-    }
-    let table = document.getElementById('records');
-    table.parentNode.replaceChild(searchBody,table);
+    e.preventDefault();
+    selectVal = document.getElementById('inputGroupSelect');
+    currSize = parseInt(selectVal[selectVal.selectedIndex].value);
+    currGroup = searchGroup;
+    currTab = 2;
+    newTbody(currSize,searchGroup);
+    document.getElementById('currPage').innerHTML = 1;
+    document.getElementById('totalPages').innerHTML = page = Math.ceil(searchGroup.length / currSize) !== 0 ? page:1;
 });
-
 $('#prevPage').click(function(e) {
     let currPage = document.getElementById('currPage').innerHTML;
     if(currPage === '1') {
@@ -184,14 +231,14 @@ $('#prevPage').click(function(e) {
 
 });
 $('#nextPage').click(function(e) {
-    currPage = document.getElementById('currPage').innerHTML;
+    let currPage = document.getElementById('currPage').innerHTML;
     if(currPage === document.getElementById('totalPages').innerHTML) {
         return;
     }
     currPage = parseInt(currPage);
     nextPage = currPage + 1;
     document.getElementById('currPage').innerHTML = nextPage;
-    paging(nextPage)
+    paging(nextPage);
 });
 $("#inputGroupSelect").change(function(e) {
     let selectSize = document.getElementById('inputGroupSelect');
@@ -207,21 +254,101 @@ $("#inputGroupSelect").change(function(e) {
             count: currTableSize
         },
         success: function (data) {
-            CurrGroup = data
-            paging(currPage);
+            currGroup = data
+            paging(currPage,document.getElementsByTagName('tabs').id);
             document.getElementById('totalPages').innerHTML = Math.ceil(100 / currTableSize);
         },
     });
 
 });
 $('#downloadTable').click(function(e) {
-    let table = document.getElementById('records');
-    console.log(table);
+    if(currTab === 0) {
+        download_csv();
+    }
+    else if(currTab === 1) {
+        let data = '';
+        for(obj in selectGroup) {
+            let name = selectGroup[obj].firstLast.split("_").join(" ");
+            let sector = selectGroup[obj].sector = person.sector.split("_").join(" ");
+            data += name+","+selectGroup[obj].employer+","+sector
+            +"," + selectGroup[obj].salary +","+selectGroup[obj].province+","+selectGroup[obj].year+"\n"
+        }
+        writeCSV(data,"selectedGroup.csv");
+    }
 });
 $("#genSearch").click(function(e) {
     toSearch = document.getElementById('genSearchVal');
     currPage = document.getElementById('currPage').innerHTML;
-    CurrGroup = generic_search(toSearch.value);
+    if(toSearch.value === '') {
+        paging(parseInt(currPage),currTab);
+    }
+    else {
+        currGroup = generic_search(toSearch.value);
+    }
+
+
+});
+$("#AdvanceSearchBtm").click(function(e) {
+    let first = document.getElementById('firstName').value;
+    let last = document.getElementById('lastName').value;
+    let sector = document.getElementById('sector').value;
+    let employer = document.getElementById('employer').value;
+    let prov = document.getElementById('prov');
+    let minSal = document.getElementById('minSalary').value;
+    let maxSal = document.getElementById('maxSalary').value;
+    let minYear = document.getElementById('minYear').value;
+    let maxYear = document.getElementById('maxYear').value;
+    console.log(minSal)
+    if(first === '') {
+        first = null;
+    }
+    if(last === '') {
+        last = null;
+    }
+    if(sector === '') {
+        sector = null;
+    }
+    if(employer === '') {
+        employer = null;
+    }
+    if(minSal === '') {
+        minSal = null;
+    }
+    if(maxSal === '') {
+        maxSal = null;
+    }
+    if(minYear === '') {
+        minYear = null;
+    }
+    if(maxYear === '') {
+        maxYear = null;
+    }
+    $.ajax({
+        type:'get',
+        dataType: 'json',
+        url:'/advancedSearch',
+        data: {
+            firstName:first,
+            lastName:last,
+            sector: sector,
+            employer:employer,
+            province: prov[0].innerHTML,
+            salaryRange: {
+                starting: minSal,
+                ending:maxSal
+            },
+            year: {
+                starting:minYear,
+                ending:minYear
+            }
+        },
+        success:function(data){
+            console.log(data)
+            searchGroup = data;
+        },
+    });
+
+
 
 
 });
@@ -234,7 +361,7 @@ function generic_search(uesrSearchVal)
     console.log("general");
     let selectSize = document.getElementById('inputGroupSelect');
     let currTableSize = parseInt(selectSize[selectSize.selectedIndex].value);
-    console.log(uesrSearchVal)
+
     $.ajax({
         type: 'get',            //Request type
         dataType: 'json',       //Data type - we will use JSON for almost everything
@@ -243,16 +370,18 @@ function generic_search(uesrSearchVal)
             searchVal: uesrSearchVal
         },
         success: function (data) {
-            CurrGroup = data;
+            currGroup = data;
+            salaryGroup = currGroup;
             // Ajax will return a json to the front end with the search results
             // [] will return if no results are found
-            newTbody(currTableSize)
+            newTbody(currTableSize, currGroup);
             // insert_into_search_table(data);
         },
     });
 }
 
 function update_on_row_select(person_name, action) {
+
     // person name will be First Last, spaces = "_", caps on first letter
     $.ajax({
         type: 'get',            //Request type
@@ -262,7 +391,6 @@ function update_on_row_select(person_name, action) {
 
             //Person to be updated
             toUpdate: person_name,
-
             //action, true when they select, faLse when they unselect
             select: action
         },
@@ -313,4 +441,31 @@ function create_graph(){
         console.log("Error");
       },
   })
+}
+
+function download_csv() {
+    // person name will be First Last, spaces = "_", caps on first letter
+    $.ajax({
+        type: 'get',            //Request type
+        dataType: 'json',       //Data type - we will use JSON for almost everything 
+        url: '/download_csv',   //The server endpoint we are connecting to
+        data: {},
+        success: function (data) {
+            writeCSV(data,"salaryTable.csv");
+        },   
+    }); 
+}
+
+function writeCSV(data,fileName) {
+    var content = data;
+    var mimeType = 'text/csv;encoding:utf-8';
+    var a = document.createElement('a');
+    
+    a.href = URL.createObjectURL(new Blob([content], {
+        type: mimeType
+    }));
+    a.setAttribute('download', fileName);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }

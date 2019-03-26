@@ -103,9 +103,10 @@ app.get('/getSalaryInformation', function(req , res){
     var dbRef = firebase.database().ref('People/');
 
     dbRef.orderByChild(column).
-    limitToFirst(count).on("value", function(data) {
+    limitToFirst(count).once("value", function(data) {
         data.forEach(function(data) {
           data_set.push(data.val());
+          // console.log(data.val());
         });
         res.send(data_set);
     });
@@ -115,25 +116,29 @@ app.get('/getSalaryInformation', function(req , res){
   General search for the table
 */
 app.get('/search', (req, res) => {
-  console.log("General");
   //This works with the front end call but not via postman
-  var general_search = req.query.general_search;
-
-  // This works with postman
-  if (general_search == undefined) {
-    // general_search = req.body.fields.general_search;
+  var search = req.query.searchVal;
+  console.log(search);  
+  var split = search.split(' ');
+  var general_search = "";
+  
+  for (i = 0; i < split.length; i++) {
+    split[i] = split[i].charAt(0).toUpperCase() + split[i].slice(1);
+    general_search += split[i];
+    if (i+1 != split.length) general_search += "_";
   }
 
+  console.log(general_search);
 
   var dbRef = firebase.database().ref('People/');
   var search_one, search_two = [];
 
   dbRef.orderByChild('firstLast').startAt(general_search).
-  endAt(general_search+"\uf8ff").on('value', snap => {
+  endAt(general_search+"\uf8ff").once('value', snap => {
     search_one = snap.val();
 
     dbRef.orderByChild('lastFirst').startAt(general_search).
-    endAt(general_search+"\uf8ff").on('value', snap => {
+    endAt(general_search+"\uf8ff").once('value', snap => {
         search_two = snap.val();
         res.json(mergeObjects(search_one,search_two));
       });
@@ -149,15 +154,15 @@ function mergeObjects(a, b) {
 
 app.get('/advancedSearch', (req, res) => {
 
-  var firstName = req.body.query.firstName;
-  var lastName = req.body.query.lastName;
-  var sector = req.body.query.sector;
-  var employer = req.body.query.employer;
-  var province = req.body.query.province;
-  var salaryStart = req.body.query.salaryRange.starting;
-  var salaryEnd = req.body.query.salaryRange.ending;
-  var yearStart = req.body.query.year.starting;
-  var yearEnd = req.body.query.year.ending;
+  var firstName = req.query.firstName;
+  var lastName = req.query.lastName;
+  var sector = req.query.sector;
+  var employer = req.query.employer;
+  var province = req.query.province;
+  var salaryStart = req.query.salaryRange.starting;
+  var salaryEnd = req.query.salaryRange.ending;
+  var yearStart = req.query.year.starting;
+  var yearEnd = req.query.year.ending;
 
   var DB = firebase.database().ref().child('People').limitToFirst(200);
   var dataSet = [];
@@ -215,29 +220,45 @@ app.get('/advancedSearch', (req, res) => {
 app.get('/update_record_select', (req, res) => {
   //This works with the front end call but not via postman
   var record_to_update = req.query.toUpdate;
-  var action = parseInt(req.query.selct);
+  var action = req.query.select;
 
-  // var record_to_update = req.body.fields.toUpdate;
-  // var action = req.body.fields.select
+  console.log("Action is " + action);
+  
+  var dbRef = firebase.database().ref('People/');
 
-  console.log(action);
+  dbRef.orderByChild('firstLast').equalTo(record_to_update).once('value', snap => {
+    var update;
+    var id;
 
-  var dbRef = firebase.database().ref('People/')
+    snap.forEach(data => {
+      update = data.val();
+      id = data.key;
+    })
 
-  dbRef.orderByChild('firstLast').equalTo(record_to_update).on('value', snap => {
-    console.log(snap.val());
-    var update = snap.val();
     update.selected = action;
-    var id = snap.key;
+    console.log(id);
 
-    firebase.database().ref("People/"+id).
-    update(update, function(err) {
+    firebase.database().ref("People/"+id).set(update, function(err) {
       res.send();
-
     });
   });
+});
 
+app.get('/download_csv', (req, res) => {
+  var dbRef = firebase.database().ref('People/');
+  var excelLine = "Name,Employer,Sector,Salary,Province,Year\n";
+    
+  dbRef.once("value", function(data) {
+      data.forEach(function(data) {
+        var person = data.val();
+        var firstLast = person.firstLast.split("_").join(" ");
+        var sector = person.sector.split("_").join(" ");
+        excelLine += firstLast+","+person.employer+","+sector
+        +"," + person.salary +","+person.province+","+person.year+"\n";
+      });
 
+      res.json(excelLine);
+  });
 });
 
 //NOTE:: How this works is it will save the file into public/img and then use it later
