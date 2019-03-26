@@ -318,7 +318,7 @@ $("#AdvanceSearchBtm").click(function(e) {
             lastName:last,
             sector: sector,
             employer:employer,
-            province: prov[0].value,
+            province: prov[0].innerHTML,
             salaryRange: {
                 starting: minSal,
                 ending:maxSal
