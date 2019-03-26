@@ -267,7 +267,19 @@ $("#inputGroupSelect").change(function(e) {
     
 });
 $('#downloadTable').click(function(e) {
-    download_csv();
+    if(currTab === 0) {
+        download_csv();
+    }
+    else if(currTab === 1) {
+        let data = '';
+        for(obj in selectGroup) {
+            let name = selectGroup[obj].firstLast.split("_").join(" ");
+            let sector = selectGroup[obj].sector = person.sector.split("_").join(" ");
+            data += name+","+selectGroup[obj].employer+","+sector
+            +"," + selectGroup[obj].salary +","+selectGroup[obj].province+","+selectGroup[obj].year+"\n"
+        }
+        writeCSV(data,"selectedGroup.csv");
+    }
 });
 $("#genSearch").click(function(e) {
     toSearch = document.getElementById('genSearchVal');
@@ -401,20 +413,20 @@ function download_csv() {
         url: '/download_csv',   //The server endpoint we are connecting to
         data: {},
         success: function (data) {
-            writeCSV(data);
+            writeCSV(data,"salaryTable.csv");
         },   
     }); 
 }
 
-function writeCSV(data) {
+function writeCSV(data,fileName) {
     var content = data;
     var mimeType = 'text/csv;encoding:utf-8';
     var a = document.createElement('a');
     
     a.href = URL.createObjectURL(new Blob([content], {
         type: mimeType
-      }));
-    a.setAttribute('download', "salaryTable.csv");
+    }));
+    a.setAttribute('download', fileName);
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
