@@ -401,8 +401,21 @@ function download_csv() {
         url: '/download_csv',   //The server endpoint we are connecting to
         data: {},
         success: function (data) {
-            console.log(data);
-        
-        },        
+            writeCSV(data);
+        },   
     }); 
+}
+
+function writeCSV(data) {
+    var content = data;
+    var mimeType = 'text/csv;encoding:utf-8';
+    var a = document.createElement('a');
+    
+    a.href = URL.createObjectURL(new Blob([content], {
+        type: mimeType
+      }));
+    a.setAttribute('download', "salaryTable.csv");
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }

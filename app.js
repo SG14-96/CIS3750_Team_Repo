@@ -228,7 +228,6 @@ app.get('/update_record_select', (req, res) => {
       id = data.key;
     })
 
-    // console.log(update);
     update.selected = action;
     console.log(id);
 
@@ -240,9 +239,9 @@ app.get('/update_record_select', (req, res) => {
 
 app.get('/download_csv', (req, res) => {
   var dbRef = firebase.database().ref('People/');
-  var excelLine = "";
+  var excelLine = "Name,Employer,Sector,Salary,Province,Year\n";
     
-  dbRef.on("value", function(data) {
+  dbRef.once("value", function(data) {
       data.forEach(function(data) {
         var person = data.val();
         var firstLast = person.firstLast.split("_").join(" ");
