@@ -4,9 +4,10 @@ let salaryGroup = null;
 let selectGroup = [];
 let searchGroup = [];
 let currTab = 0;
+let allData = null;
 $(document).ready(function() {
         load_main_table();
-
+        getAllRecords();
         // Testing the baod
 
         // ***********************************************
@@ -72,7 +73,7 @@ function insert_into_website_table(tableSize)
         row.insertCell(2).innerHTML = salaryGroup[obj].employer;
         sectorName = salaryGroup[obj].sector.split('_');
         row.insertCell(3).innerHTML = sectorName.join(" ");        
-        row.insertCell(4).innerHTML = salaryGroup[obj].salary;  
+        row.insertCell(4).innerHTML = '$ ' + salaryGroup[obj].salary;  
         row.insertCell(5).innerHTML = salaryGroup[obj].province;
         row.insertCell(6).innerHTML = salaryGroup[obj].year;
         //salaryGroup.innerHTML = person_array[i].First;
@@ -132,7 +133,7 @@ function newTbody(currSize,group) {
             row.insertCell(2).innerHTML = group[obj].employer;
             sectorName = group[obj].sector.split('_');
             row.insertCell(3).innerHTML = sectorName.join(" ");
-            row.insertCell(4).innerHTML = group[obj].salary;  
+            row.insertCell(4).innerHTML = '$ ' + group[obj].salary;  
             row.insertCell(5).innerHTML = group[obj].province;
             row.insertCell(6).innerHTML = group[obj].year;
             //person.innerHTML = person_array[i].First;
@@ -348,9 +349,13 @@ $("#AdvanceSearchBtm").click(function(e) {
         },
     });
 
-
-
-
+});
+$('#createGraph').click(function(e) {
+    let graph = document.getElementById("graphing");
+    while (graph.hasChildNodes()) {
+        graph.removeChild(graph.lastChild);
+    }
+    create_graph();
 });
 // The user will insert a generic search
 // This function will pass one string, with no spaces to backend
@@ -399,11 +404,35 @@ function update_on_row_select(person_name, action) {
         },
     });
 }
-
+function getAllRecords() {
+    let sortBy = 'firstName';
+    let number_people = 100;
+    $.ajax({
+        type: 'get',            //Request type
+        dataType: 'json',       //Data type - we will use JSON for almost everything
+        url: '/getSalaryInformation',   //The server endpoint we are connecting to
+        data: {
+            sortBy: sortBy,
+            count: number_people
+        },
+        success: function (data) {
+            console.log(data);
+            allData = data;
+        },        
+    });
+}
 //Call this function to generate the graph for the current data within the selected table
 function create_graph(){
-  let selectedTable = document.getElementById("records"),
-    records = [];//TODO:: FILL RECORDS WILL ARRAY
+    let selectedTable = document.getElementById("records");
+    if(currTab == 0) {
+        records = allData;
+    }
+    else if(currTab == 1) {
+        records = selectGroup;
+    }
+    else {
+        records = searchGroup;
+    }
 
    let graphType = "scatter", //TODO:: Get the type of graph --- We can just keep it scatter for saving time
     xAxis = [],
@@ -411,12 +440,10 @@ function create_graph(){
     xAxisName = "Year", //What x-Axis we are using: These can be static if beeded: TODO::Fix names
     yAxisName = "Salary"  //What y-Axis we are using: These can be static if needed
     title = xAxisName + " VS " + yAxisName +" " + graphType + " plot";
-
-    let recordsLength = records.length;
-    while(recordsLength){//Loops though all the selected records and add's the values of the axis's to the respective arrays
-      recordsLength--
-      xAxis.push(records[recordsLength].xAxisName);
-      yAxis.push(records[recordsLength].yAxisName);
+    console.log(records)
+    for(obj in records) {
+        xAxis.push(records[obj].year);
+        yAxis.push(records[obj].salary);
     }
 
   $.ajax({
@@ -432,7 +459,7 @@ function create_graph(){
         title:title
       },
       success:function(data){
-        let selectSize = document.getElementById('TESTGRAPHING'),//CHANGE This to actual DIV
+        let selectSize = document.getElementById('graphing'),//CHANGE This to actual DIV
           graph = document.createElement("IMG");
           graph.src = 'img/graph.png';
           selectSize.appendChild(graph);

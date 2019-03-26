@@ -69,8 +69,9 @@
                     <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#bigSearch" aria-expanded="false" aria-controls="collapseExample">
                         Advance Search
                     </button>
-                    <button class="btn btn-outline-secondary" type="button">Graph/Stats</button>
+                    <button class="btn btn-outline-secondary" id="createGraph" type="button" data-toggle="collapse" data-target="#graphing" aria-expanded="false" aria-controls="collapseExample">Graph/Stats</button>
                     <div class="w-100"></div>
+                    <div class="collapse col border" id="graphing"></div>
                     <div class="collapse col border" id="bigSearch" >
                         <form>
                             <div class="form-row">
@@ -119,15 +120,16 @@
                                     </div>
                             </div>
                             <br>
-                            <div class="row justify-content-center">
-                                <div class="col-1">
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-6">
                                     <button type="reset" class="btn btn-primary">Clear</button>
                                 </div>
-                                <div class="col-1">
+                                <div class="col-md-2">
                                     <button id="AdvanceSearchBtm"type="button" class="btn btn-primary">Search</button>
                                 </div>
                             </div>
                         </form>
+                        <br>
                     </div>
             </div>
             <div class="row justify-content-end input-group mb-3">
