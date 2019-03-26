@@ -92,7 +92,12 @@ function selectedRow() {
             currGroup[obj].selected = this.checked;
             if(currGroup[obj].selected === true) {
                 let str = JSON.stringify(currGroup[obj]);
-                salaryGroup[obj].selected = true;
+                if(currTab === 0) {
+                    salaryGroup[obj].selected = true;
+                }
+                else {
+                    searchGroup[obj].selected = true;
+                }
                 selectGroup.push(JSON.parse(str));
                 update_on_row_select(name,'true');
             }
@@ -103,11 +108,15 @@ function selectedRow() {
                         update_on_row_select(name,'false');
                     }
                 }
+                if(currTab === 1) {
+                    let selectVal = document.getElementById('inputGroupSelect');
+                    let currSize = parseInt(selectVal[selectVal.selectedIndex].value);
+                    newTbody(currSize,selectGroup);
+                }
             }
 
         }
     }
-    console.log(selectGroup)
 }
 function newTbody(currSize,group) {
     let i = 0;
@@ -176,7 +185,6 @@ function paging(newPage) {
         let tempGroup = []
         for(obj in currGroup) {
             if(i >= currSize * (newPage - 1)) {
-                console.log(obj)
                 tempGroup.push(currGroup[obj]);
             }
             i++;
@@ -191,7 +199,6 @@ $("#clearSearch").click(function(e) {
     paging(parseInt(currPage),currTab);
 });
 $('#Salary-tab').click(function(e) {
-    e.preventDefault();
     selectVal = document.getElementById('inputGroupSelect');
     currSize = parseInt(selectVal[selectVal.selectedIndex].value);
     currGroup = salaryGroup;
@@ -200,25 +207,24 @@ $('#Salary-tab').click(function(e) {
     document.getElementById('totalPages').innerHTML = Math.ceil(100 / currSize); 
 });
 $('#selected-tab').click(function(e) {
-    e.preventDefault();
     selectVal = document.getElementById('inputGroupSelect');
     currSize = parseInt(selectVal[selectVal.selectedIndex].value);
     currGroup = selectGroup;
     currTab = 1;
     newTbody(currSize,selectGroup);
     document.getElementById('currPage').innerHTML = 1;
-    let page = Math.ceil(searchGroup.length / currSize);
-    document.getElementById('totalPages').innerHTML = page = Math.ceil(searchGroup.length / currSize) !== 0 ? page:1;
+    let page = Math.ceil(selectGroup.length / currSize);
+    document.getElementById('totalPages').innerHTML = page !== 0 ? page:1;
 });
 $('#search-tab').click(function(e) {
-    e.preventDefault();
     selectVal = document.getElementById('inputGroupSelect');
     currSize = parseInt(selectVal[selectVal.selectedIndex].value);
     currGroup = searchGroup;
     currTab = 2;
     newTbody(currSize,searchGroup);
     document.getElementById('currPage').innerHTML = 1;
-    document.getElementById('totalPages').innerHTML = page = Math.ceil(searchGroup.length / currSize) !== 0 ? page:1;
+    let page = Math.ceil(searchGroup.length / currSize);
+    document.getElementById('totalPages').innerHTML = page !== 0 ? page:1;
 });
 $('#prevPage').click(function(e) {
     let currPage = document.getElementById('currPage').innerHTML;
@@ -299,18 +305,29 @@ $("#AdvanceSearchBtm").click(function(e) {
     let maxSal = document.getElementById('maxSalary').value;
     let minYear = document.getElementById('minYear').value;
     let maxYear = document.getElementById('maxYear').value;
-    console.log(minSal)
     if(first === '') {
         first = null;
+    }
+    else {
+        first.split(" ").join("_");
     }
     if(last === '') {
         last = null;
     }
+    else {
+        last.split(" ").join("_");
+    }
     if(sector === '') {
         sector = null;
     }
+    else {
+        sector.split(" ").join("_");
+    }
     if(employer === '') {
         employer = null;
+    }
+    else {
+        employer.split(" ").join("_");
     }
     if(minSal === '') {
         minSal = null;
@@ -344,8 +361,9 @@ $("#AdvanceSearchBtm").click(function(e) {
             }
         },
         success:function(data){
-            console.log(data)
             searchGroup = data;
+            $('#search-tab').click();
+            alert("Search Completed")
         },
     });
 
@@ -416,7 +434,6 @@ function getAllRecords() {
             count: number_people
         },
         success: function (data) {
-            console.log(data);
             allData = data;
         },        
     });

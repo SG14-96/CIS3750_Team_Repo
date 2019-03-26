@@ -166,55 +166,57 @@ app.get('/advancedSearch', (req, res) => {
 
   var DB = firebase.database().ref().child('People').limitToFirst(200);
   var dataSet = [];
-  DB.on('value',snap =>{
+  console.log(salaryStart)
+  DB.once('value',snap =>{
     dataSet = snap.val();
-    if (firstName != null) {
+    if (firstName !== '') {
+      console.log("test")
       dataSet = dataSet.filter(function(data){
         return data.firstName === firstName;
       });
     }
-    if (lastName != null) {
+    if (lastName !== '') {
       dataSet = dataSet.filter(function(data){
         return data.lastName === lastName;
       });
     }
-    if (sector != null) {
+    if (sector !== '') {
       dataSet = dataSet.filter(function(data){
         return data.sector === sector;
       });
     }
-    if (employer != null) {
+    if (employer !== '') {
       dataSet = dataSet.filter(function(data){
         return data.employer === employer;
       });
     }
-    if (province != null) {
+    if (province !== '') {
       dataSet = dataSet.filter(function(data){
         return data.province === province;
       });
     }
-    if (salaryStart != null) {
+    if (salaryStart !== '') {
       dataSet = dataSet.filter(function(data){
         return data.salary >= salaryStart;
       });
     }
-    if (salaryEnd != null) {
+    if (salaryEnd !== '') {
       dataSet = dataSet.filter(function(data){
         return data.salary <= salaryStart;
       });
     }
-    if (yearStart != null) {
+    if (yearStart !== '') {
       dataSet = dataSet.filter(function(data){
         return data.year >= yearStart;
       });
     }
-    if (yearEnd != null) {
+    if (yearEnd !== '') {
       dataSet = dataSet.filter(function(data){
         return data.year <= yearEnd;
       });
     }
+    res.json(dataSet);
   });
-  res.json(dataSet);
 });
 
 app.get('/update_record_select', (req, res) => {
