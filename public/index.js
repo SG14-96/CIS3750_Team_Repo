@@ -375,6 +375,14 @@ $('#createGraph').click(function(e) {
     }
     create_graph();
 });
+$('#selectCurr').click(function(e){
+    let selectedTable = document.getElementById("records");
+
+    let rows = selectedTable.rows;
+    for(let i = 0; i < rows.length; i++) {
+        rows[i].cells[0].childNodes[0].click();
+    }
+});
 // The user will insert a generic search
 // This function will pass one string, with no spaces to backend
 // Ajax will return a json to the front end with the search results
@@ -440,7 +448,6 @@ function getAllRecords() {
 }
 //Call this function to generate the graph for the current data within the selected table
 function create_graph(){
-    let selectedTable = document.getElementById("records");
     if(currTab == 0) {
         records = allData;
     }
