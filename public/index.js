@@ -110,7 +110,7 @@ function selectedRow() {
     }
     console.log(selectGroup)
 }
-function newTbody(currPage,group) {
+function newTbody(currSize,group) {
     let i = 0;
     let table = document.getElementById('records');
 
@@ -119,7 +119,7 @@ function newTbody(currPage,group) {
 
 
     for (obj in group) {
-            if(i >= group.length || i === currPage) {
+            if(i >= group.length || i === currSize) {
                 break;
             }
             let btm = document.createElement("input");
@@ -193,7 +193,8 @@ $('#Salary-tab').click(function(e) {
     currSize = parseInt(selectVal[selectVal.selectedIndex].value);
     currGroup = salaryGroup;
     currTab = 0;
-    newTbody(currSize,salaryGroup);
+    paging(1);
+    document.getElementById('totalPages').innerHTML = Math.ceil(100 / currSize); 
 });
 $('#selected-tab').click(function(e) {
     e.preventDefault();
@@ -202,14 +203,19 @@ $('#selected-tab').click(function(e) {
     currGroup = selectGroup;
     currTab = 1;
     newTbody(currSize,selectGroup);
+    document.getElementById('currPage').innerHTML = 1;
+    let page = Math.ceil(searchGroup.length / currSize);
+    document.getElementById('totalPages').innerHTML = page = Math.ceil(searchGroup.length / currSize) !== 0 ? page:1;
 });
 $('#search-tab').click(function(e) {
     e.preventDefault();
     selectVal = document.getElementById('inputGroupSelect');
     currSize = parseInt(selectVal[selectVal.selectedIndex].value);
-    currGroup = searchBody;
+    currGroup = searchGroup;
     currTab = 2;
-    newTbody(currSize,searchBody);
+    newTbody(currSize,searchGroup);
+    document.getElementById('currPage').innerHTML = 1;
+    document.getElementById('totalPages').innerHTML = page = Math.ceil(searchGroup.length / currSize) !== 0 ? page:1;
 });
 $('#prevPage').click(function(e) {
     let currPage = document.getElementById('currPage').innerHTML;
@@ -269,7 +275,66 @@ $("#genSearch").click(function(e) {
     
 });
 $("#AdvanceSearchBtm").click(function(e) {
-    
+    let first = document.getElementById('firstName').value;
+    let last = document.getElementById('lastName').value;
+    let sector = document.getElementById('sector').value;
+    let employer = document.getElementById('employer').value;
+    let prov = document.getElementById('prov');
+    let minSal = document.getElementById('minSalary').value;
+    let maxSal = document.getElementById('maxSalary').value;
+    let minYear = document.getElementById('minYear').value;
+    let maxYear = document.getElementById('maxYear').value;
+    console.log(minSal)
+    if(first === '') {
+        first = null;
+    }
+    if(last === '') {
+        last = null;
+    }
+    if(sector === '') {
+        sector = null;
+    }
+    if(employer === '') {
+        employer = null;
+    }
+    if(minSal === '') {
+        minSal = null;
+    }
+    if(maxSal === '') {
+        maxSal = null;
+    }
+    if(minYear === '') {
+        minYear = null;
+    }
+    if(maxYear === '') {
+        maxYear = null;
+    }
+    $.ajax({
+        type:'get',
+        dataType: 'json',
+        url:'/advancedSearch',
+        data: {
+            firstName:first,
+            lastName:last,
+            sector: sector,
+            employer:employer,
+            province: prov[0].value,
+            salaryRange: {
+                starting: minSal,
+                ending:maxSal
+            },
+            year: {
+                starting:minYear,
+                ending:minYear
+            }
+        },
+        success:function(data){
+            console.log(data)
+            searchGroup = data;
+        },
+    });
+
+
 
 
 });

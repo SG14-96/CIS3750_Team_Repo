@@ -147,15 +147,15 @@ function mergeObjects(a, b) {
 
 app.get('/advancedSearch', (req, res) => {
 
-  var firstName = req.body.query.firstName;
-  var lastName = req.body.query.lastName;
-  var sector = req.body.query.sector;
-  var employer = req.body.query.employer;
-  var province = req.body.query.province;
-  var salaryStart = req.body.query.salaryRange.starting;
-  var salaryEnd = req.body.query.salaryRange.ending;
-  var yearStart = req.body.query.year.starting;
-  var yearEnd = req.body.query.year.ending;
+  var firstName = req.query.firstName;
+  var lastName = req.query.lastName;
+  var sector = req.query.sector;
+  var employer = req.query.employer;
+  var province = req.query.province;
+  var salaryStart = req.query.salaryRange.starting;
+  var salaryEnd = req.query.salaryRange.ending;
+  var yearStart = req.query.year.starting;
+  var yearEnd = req.query.year.ending;
 
   var DB = firebase.database().ref().child('People').limitToFirst(200);
   var dataSet = [];
