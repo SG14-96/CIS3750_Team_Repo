@@ -188,6 +188,12 @@ function paging(newPage) {
     }
 
 }
+$("#clearSearch").click(function(e) {
+    toSearch = document.getElementById('genSearchVal');
+    currPage = document.getElementById('currPage').innerHTML;
+    toSearch.value = "";
+    paging(parseInt(currPage),currTab);
+});
 $('#Salary-tab').click(function(e) {
     e.preventDefault();
     selectVal = document.getElementById('inputGroupSelect');
