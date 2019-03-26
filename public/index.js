@@ -169,6 +169,7 @@ function paging(newPage) {
                     i++;
                 }
                 currGroup = tempGroup;
+                salaryGroup = currGroup;
                 newTbody(currSize,currGroup);
             },        
         });
