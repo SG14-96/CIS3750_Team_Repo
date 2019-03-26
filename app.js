@@ -6,6 +6,9 @@ var path = require('path');
 var FireBaseAdmin = require('firebase-admin');
 var firebase = require("firebase");
 
+//------------ PLOTLY SETUP ---------
+var plotly = require('plotly')('CameronGuitard', 'JltZxY0tf5U4rDGb01rW');
+
 // Initialize Firebase Connection
 // Account set up with Samuel Denton email
 var config = {
@@ -59,6 +62,10 @@ app.get('/img/teamImage.jpg',function(req,res){
 app.get('/img/twitterLogo.png',function(req,res){
   res.sendFile(path.join(__dirname+'/public/img/twitterLogo.png'));
 });
+//The hack for using the graph
+app.get('/img/graph.png',function(req,res){
+  res.sendFile(path.join(__dirname+'/public/img/graph.png'));
+});
 
 // Send Style, do not change
 app.get('/style.css',function(req,res){
@@ -79,7 +86,7 @@ app.get('/index.js',function(req,res){
 
 // Read the entire database
 app.get('/getSalaryInformation', function(req , res){
-    
+
     var data_set = [];
     var data_set_2 = [];
 
@@ -91,17 +98,17 @@ app.get('/getSalaryInformation', function(req , res){
     // if (column == undefined && count == undefined) {
     //   var column = req.body.fields.sortBy;
     //   var count = req.body.fields.count;
-    // } 
+    // }
 
     var dbRef = firebase.database().ref('People/');
-    
+
     dbRef.orderByChild(column).
     limitToFirst(count).once("value", function(data) {
         data.forEach(function(data) {
           data_set.push(data.val());
           // console.log(data.val());
         });
-        res.send(data_set);    
+        res.send(data_set);
     });
 });
 
@@ -133,7 +140,7 @@ app.get('/search', (req, res) => {
     dbRef.orderByChild('lastFirst').startAt(general_search).
     endAt(general_search+"\uf8ff").once('value', snap => {
         search_two = snap.val();
-        res.json(mergeObjects(search_one,search_two)); 
+        res.json(mergeObjects(search_one,search_two));
       });
   });
 });
@@ -251,6 +258,45 @@ app.get('/download_csv', (req, res) => {
       });
 
       res.json(excelLine);
+  });
+});
+
+//NOTE:: How this works is it will save the file into public/img and then use it later
+app.get('/create_graph', (req,res) =>{
+    var trace1 = {
+      x: req.query.xAxis,
+      y: req.query.yAxis,
+      type: req.query.type
+    };
+
+  var layout = {
+        title: {
+          text: req.query.title,
+        },
+        xaxis: {
+          title: {
+            text: req.query.xAxisName,
+          },
+        },
+        yaxis: {
+          title: {
+            text: req.query.yAxisName,
+          }
+        }
+      };
+
+  var figure = { 'data': [trace1],'layout': layout};
+
+  var imgOpts = {//NOTE::Can change the proportions of the image here
+    format: 'png',
+    width: 500,
+    height: 250
+  };
+
+  plotly.getImage(figure, imgOpts, function (error, imageStream) {//NOTE::Downloading can be the same thing but go into downloads folder
+    var fileStream = fs.createWriteStream(__dirname+'/public/img/graph.png');
+    imageStream.pipe(fileStream);
+    res.send({});
   });
 });
 

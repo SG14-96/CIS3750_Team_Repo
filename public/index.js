@@ -24,7 +24,7 @@ $(document).ready(function() {
 });
 
     //Load the main page of the website
-function load_main_table() 
+function load_main_table()
 {
     var number_people = 10;
     var sortBy = "firstName";
@@ -32,9 +32,9 @@ function load_main_table()
     //  what the user wants to sort the table by
     $.ajax({
         type: 'get',            //Request type
-        dataType: 'json',       //Data type - we will use JSON for almost everything 
-        url: '/getSalaryInformation',   //The server endpoint we are connecting to 
-        data: {   
+        dataType: 'json',       //Data type - we will use JSON for almost everything
+        url: '/getSalaryInformation',   //The server endpoint we are connecting to
+        data: {
             sortBy: sortBy,
             count: number_people
         },
@@ -71,8 +71,7 @@ function insert_into_website_table(tableSize)
         row.insertCell(1).innerHTML = fullName.join(" ");
         row.insertCell(2).innerHTML = salaryGroup[obj].employer;
         sectorName = salaryGroup[obj].sector.split('_');
-        row.insertCell(3).innerHTML = sectorName.join(" ");
-        
+        row.insertCell(3).innerHTML = sectorName.join(" ");        
         row.insertCell(4).innerHTML = salaryGroup[obj].salary;  
         row.insertCell(5).innerHTML = salaryGroup[obj].province;
         row.insertCell(6).innerHTML = salaryGroup[obj].year;
@@ -81,7 +80,6 @@ function insert_into_website_table(tableSize)
     }
     //let size = Object.keys(salaryGroup).length;
     document.getElementById('totalPages').innerHTML = 10;
-
 } 
 function selectedRow() {
     let name = this.parentNode.parentNode.cells[1].innerHTML;
@@ -134,7 +132,6 @@ function newTbody(currSize,group) {
             row.insertCell(2).innerHTML = group[obj].employer;
             sectorName = group[obj].sector.split('_');
             row.insertCell(3).innerHTML = sectorName.join(" ");
-            
             row.insertCell(4).innerHTML = group[obj].salary;  
             row.insertCell(5).innerHTML = group[obj].province;
             row.insertCell(6).innerHTML = group[obj].year;
@@ -142,7 +139,6 @@ function newTbody(currSize,group) {
         i++;
     }
     table.parentNode.replaceChild(newTbody,table);
-
 
 }
 function paging(newPage) {
@@ -186,7 +182,6 @@ function paging(newPage) {
         }
         newTbody(currSize,tempGroup);
     }
-
 }
 $("#clearSearch").click(function(e) {
     toSearch = document.getElementById('genSearchVal');
@@ -230,7 +225,7 @@ $('#prevPage').click(function(e) {
         return;
     }
     currPage = parseInt(currPage);
-    
+
     document.getElementById('currPage').innerHTML = currPage - 1;
     paging(currPage - 1)
 
@@ -252,9 +247,9 @@ $("#inputGroupSelect").change(function(e) {
     currPage = parseInt(currPage);
     $.ajax({
         type: 'get',            //Request type
-        dataType: 'json',       //Data type - we will use JSON for almost everything 
-        url: '/getSalaryInformation',   //The server endpoint we are connecting to 
-        data: {   
+        dataType: 'json',       //Data type - we will use JSON for almost everything
+        url: '/getSalaryInformation',   //The server endpoint we are connecting to
+        data: {
             sortBy: "firstName",
             count: currTableSize
         },
@@ -262,9 +257,9 @@ $("#inputGroupSelect").change(function(e) {
             currGroup = data
             paging(currPage,document.getElementsByTagName('tabs').id);
             document.getElementById('totalPages').innerHTML = Math.ceil(100 / currTableSize);
-        },        
+        },
     });
-    
+
 });
 $('#downloadTable').click(function(e) {
     if(currTab === 0) {
@@ -291,7 +286,7 @@ $("#genSearch").click(function(e) {
         currGroup = generic_search(toSearch.value);
     }
 
-    
+
 });
 $("#AdvanceSearchBtm").click(function(e) {
     let first = document.getElementById('firstName').value;
@@ -361,7 +356,7 @@ $("#AdvanceSearchBtm").click(function(e) {
 // This function will pass one string, with no spaces to backend
 // Ajax will return a json to the front end with the search results
 
-function generic_search(uesrSearchVal) 
+function generic_search(uesrSearchVal)
 {
     console.log("general");
     let selectSize = document.getElementById('inputGroupSelect');
@@ -369,7 +364,7 @@ function generic_search(uesrSearchVal)
 
     $.ajax({
         type: 'get',            //Request type
-        dataType: 'json',       //Data type - we will use JSON for almost everything 
+        dataType: 'json',       //Data type - we will use JSON for almost everything
         url: '/search',   //The server endpoint we are connecting to
         data: {
             searchVal: uesrSearchVal
@@ -381,7 +376,7 @@ function generic_search(uesrSearchVal)
             // [] will return if no results are found
             newTbody(currTableSize, currGroup);
             // insert_into_search_table(data);
-        },       
+        },
     });
 }
 
@@ -390,7 +385,7 @@ function update_on_row_select(person_name, action) {
     // person name will be First Last, spaces = "_", caps on first letter
     $.ajax({
         type: 'get',            //Request type
-        dataType: 'json',       //Data type - we will use JSON for almost everything 
+        dataType: 'json',       //Data type - we will use JSON for almost everything
         url: '/update_record_select',   //The server endpoint we are connecting to
         data: {
 
@@ -400,9 +395,52 @@ function update_on_row_select(person_name, action) {
             select: action
         },
         success: function (data) {
-            console.log(data);
-        },        
-    }); 
+            console.log("Done");
+        },
+    });
+}
+
+//Call this function to generate the graph for the current data within the selected table
+function create_graph(){
+  let selectedTable = document.getElementById("records"),
+    records = [];//TODO:: FILL RECORDS WILL ARRAY
+
+   let graphType = "scatter", //TODO:: Get the type of graph --- We can just keep it scatter for saving time
+    xAxis = [],
+    yAxis = [],
+    xAxisName = "Year", //What x-Axis we are using: These can be static if beeded: TODO::Fix names
+    yAxisName = "Salary"  //What y-Axis we are using: These can be static if needed
+    title = xAxisName + " VS " + yAxisName +" " + graphType + " plot";
+
+    let recordsLength = records.length;
+    while(recordsLength){//Loops though all the selected records and add's the values of the axis's to the respective arrays
+      recordsLength--
+      xAxis.push(records[recordsLength].xAxisName);
+      yAxis.push(records[recordsLength].yAxisName);
+    }
+
+  $.ajax({
+      type:'get',
+      dataType:'json',
+      url:'/create_graph',
+      data: {
+        type:graphType,
+        xAxis:xAxis,
+        yAxis:yAxis,
+        xAxisName:xAxisName,
+        yAxisName:yAxisName,
+        title:title
+      },
+      success:function(data){
+        let selectSize = document.getElementById('TESTGRAPHING'),//CHANGE This to actual DIV
+          graph = document.createElement("IMG");
+          graph.src = 'img/graph.png';
+          selectSize.appendChild(graph);
+      },
+      error:function(data){
+        console.log("Error");
+      },
+  })
 }
 
 function download_csv() {
